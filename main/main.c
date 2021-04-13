@@ -1,24 +1,28 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "driver/gpio.h"
 #include "sdkconfig.h"
 
-#include <stdlib.h>
-#include <stdio.h>
 #include "main.h"
 #include "utility/edp_2in9b_v3.h"
 #include "gui/gui_paint.h"
 #include "esp_log.h"
 #include "soc/io_mux_reg.h"
+#include "test_screens/test_screens.h"
 
 static const char* TAG = "main";
-
 
 void app_main(void)
 {
 
-    vTaskDelay(500 / portTICK_PERIOD_MS);
+    // horizontal_quadrants[];
+    // vertical_quadrants[];
+    // four_quadrants[];
+
+    vTaskDelay(50 / portTICK_PERIOD_MS);
 
     // initialize gpios
     ESP_LOGI(TAG, "Init GPIOs\n");
@@ -27,30 +31,13 @@ void app_main(void)
     ESP_LOGI(TAG, "Init screen\n");
     epd_2in9b_v3_init();
 
-    // ESP_LOGI(TAG, "Clear screen\n");
-    // epd_2in9b_v3_clear();
-
-    // printf("clearing to black\n");
-    // paint_clear(BLACK);
-
-    // printf("printing hello world\n");
-    // paint_draw_string(10, 20, "hello world", &Font12, WHITE, BLACK);
-    // printf("done\n");
     ESP_LOGI(TAG, "print screen\n");
     epd_2in9b_v3_display(NULL, NULL);
-
-
-    // gpio_set_direction(EPD_SCK_PIN, GPIO_MODE_OUTPUT);
-    // gpio_iomux_out(EPD_SCK_PIN, FUNC_MTCK_GPIO13, false);
 
     int i = 0;
     for (;;) {
         vTaskDelay(500 / portTICK_PERIOD_MS);
-        // gpio_set_level(EPD_SCK_PIN, 1);
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-        // gpio_set_level(EPD_SCK_PIN, 0);
         ESP_LOGI(TAG, "loop %d\n", i++);
-
     }
 }
 
