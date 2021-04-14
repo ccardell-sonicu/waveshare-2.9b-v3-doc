@@ -63,9 +63,9 @@ void app_main(void)
 
     paint_draw_string(0, 10, "Hello World", &Font16, BLACK, WHITE);
 
-    paint_draw_string(0, 28, "Font 8", &Font8, BLACK, WHITE);
-    paint_draw_string(0, 38, "Font 12", &Font12, BLACK, WHITE);
-    paint_draw_string(0, 52, "Font 16", &Font16, BLACK, WHITE);
+    paint_draw_string(0, 28, "0123456789", &Font8, BLACK, WHITE);
+    paint_draw_string(0, 38, "0123456789", &Font12, BLACK, WHITE);
+    paint_draw_string(0, 52, "0123456789", &Font16, BLACK, WHITE);
     paint_draw_string(0, 70, "Font 20", &Font20, BLACK, WHITE);
     paint_draw_string(0, 92, "Font 24", &Font24, BLACK, WHITE);
     Paint.Scale = 4;
