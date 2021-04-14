@@ -36,7 +36,18 @@ void app_main(void)
 
     /* Test code starts here */
 
+    ESP_LOGI(TAG, "Print four quadrents to screen\n");
+    epd_2in9b_v3_display(NULL, four_quadrants);
+    vTaskDelay(1500 / portTICK_PERIOD_MS);
 
+    ESP_LOGI(TAG, "Updating LUT\n");
+    edp_set_reduced_lut();
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+    // change what the screen thinks is displayed and set new image, should only update one quadrant
+    ESP_LOGI(TAG, "Print vertical/horizontal quadrents to screen\n");
+    epd_2in9b_v3_display(vertical_quadrants, horizontal_quadrants);
+    vTaskDelay(500 / portTICK_PERIOD_MS);
 
     /* Test code ends here */
 
