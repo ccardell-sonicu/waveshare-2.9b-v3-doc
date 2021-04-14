@@ -49,27 +49,29 @@ void app_main(void)
 
     // Write hello world to screen
     Paint.Image = black_image_data;
-    Paint.Width = 128;
-    Paint.Height = 296; 
+    // Paint.Width = 128;
+    // Paint.Height = 296; 
+    Paint.Width = 296;
+    Paint.Height = 128; 
     Paint.WidthMemory = Paint.Width;
     Paint.HeightMemory = Paint.Height; 
     Paint.Color =  BLACK;  
     Paint.Rotate = 0;
-    Paint.Mirror = MIRROR_HORIZONTAL; 
+    Paint.Mirror = MIRROR_NONE; 
     Paint.WidthByte = Paint.Width / 8;
     Paint.HeightByte = Paint.Height / 8;   
     Paint.Scale = 2;
 
 
-    paint_draw_string(0, 10, "Hello World", &Font16, BLACK, WHITE);
+    paint_draw_string(0, 10, "According to all known laws of aviation, there is no way a bee should be able to fly. Its wings are too small to get its fat little body off the ground.", &Font16, BLACK, WHITE);
 
-    paint_draw_string(0, 28, "0123456789", &Font8, BLACK, WHITE);
-    paint_draw_string(0, 38, "0123456789", &Font12, BLACK, WHITE);
-    paint_draw_string(0, 52, "0123456789", &Font16, BLACK, WHITE);
-    paint_draw_string(0, 70, "Font 20", &Font20, BLACK, WHITE);
-    paint_draw_string(0, 92, "Font 24", &Font24, BLACK, WHITE);
-    Paint.Scale = 4;
-    paint_draw_string(0, 118, "48", &Font24, BLACK, WHITE);
+    // paint_draw_string(0, 28, "0123456789", &Font8, BLACK, WHITE);
+    // paint_draw_string(0, 38, "0123456789", &Font12, BLACK, WHITE);
+    // paint_draw_string(0, 52, "0123456789", &Font16, BLACK, WHITE);
+    // paint_draw_string(0, 70, "Font 20", &Font20, BLACK, WHITE);
+    // paint_draw_string(0, 92, "Font 24", &Font24, BLACK, WHITE);
+    // Paint.Scale = 4;
+    // paint_draw_string(0, 118, "48", &Font24, BLACK, WHITE);
 
 
     // int j;

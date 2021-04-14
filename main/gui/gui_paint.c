@@ -100,12 +100,15 @@ void paint_set_pixel(UWORD Xpoint, UWORD Ypoint, UWORD Color)
     }
     
     if(Paint.Scale == 2){
-        UDOUBLE Addr = X / 8 + Y * Paint.WidthByte;
+        // UDOUBLE Addr = X / 8 + Y * Paint.WidthByte;
+        UDOUBLE Addr = Y / 8 + X * Paint.HeightByte;
         UBYTE Rdata = Paint.Image[Addr];
         if(Color == BLACK)
-            Paint.Image[Addr] = Rdata & ~(0x80 >> (X % 8));
+            // Paint.Image[Addr] = Rdata & ~(0x80 >> (X % 8));
+            Paint.Image[Addr] = Rdata & ~(0x80 >> (Y % 8));
         else
-            Paint.Image[Addr] = Rdata | (0x80 >> (X % 8));
+            // Paint.Image[Addr] = Rdata | (0x80 >> (X % 8));
+            Paint.Image[Addr] = Rdata | (0x80 >> (Y % 8));
     }else if(Paint.Scale == 4){
         UDOUBLE Addr = X / 4 + Y * Paint.WidthByte;
         Color = Color % 4;//Guaranteed color scale is 4  --- 0~3
