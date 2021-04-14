@@ -35,13 +35,13 @@
 #include "esp_log.h"
 #include <stdio.h>
 
-static const char* TAG = "edp_2in9b_v3";
+//static const char* TAG = "edp_2in9b_v3";
 
 /******************************************************************************
 function :	Software reset
 parameter:
 ******************************************************************************/
-static void epd_2in9b_v3_reset(void)
+void epd_2in9b_v3_reset(void)
 {
     gpio_set_level(EPD_RST_PIN, 1);
     vTaskDelay(200 / portTICK_PERIOD_MS);
@@ -56,7 +56,7 @@ function :	send command
 parameter:
      Reg : Command register
 ******************************************************************************/
-static void epd_2in9b_v3_send_read_command(UBYTE Reg)
+void epd_2in9b_v3_send_read_command(UBYTE Reg)
 {
     gpio_set_level(EPD_DC_PIN, 0);
     gpio_set_level(EPD_CS_PIN, 0);
@@ -73,7 +73,7 @@ function :	send command
 parameter:
      Reg : Command register
 ******************************************************************************/
-static void epd_2in9b_v3_send_command(UBYTE Reg)
+void epd_2in9b_v3_send_command(UBYTE Reg)
 {
     gpio_set_level(EPD_DC_PIN, 0);
     gpio_set_level(EPD_CS_PIN, 0);
@@ -86,7 +86,7 @@ function :	send data
 parameter:
     Data : Write data
 ******************************************************************************/
-static void epd_2in9b_v3_send_data(UBYTE Data)
+void epd_2in9b_v3_send_data(UBYTE Data)
 {
     gpio_set_level(EPD_DC_PIN, 1);
     gpio_set_level(EPD_CS_PIN, 0);
@@ -124,10 +124,7 @@ void epd_2in9b_v3_init(void)
 {
     epd_2in9b_v3_reset();
 
-   //waiting for the electronic paper IC to release the idle signal
-    // epd_2in9b_v3_send_command(0x05); //power on measure
-
-    epd_2in9b_v3_send_command(0x01);//power setting
+    epd_2in9b_v3_send_command(0x01); //power setting
     epd_2in9b_v3_send_data (0x03); //VDS_EN, VDG_EN
     epd_2in9b_v3_send_data (0x00); //VCOM_HV, VGHL_LV
     epd_2in9b_v3_send_data (0x2b); //VDH
@@ -142,20 +139,13 @@ void epd_2in9b_v3_init(void)
     epd_2in9b_v3_send_command(0x04); //power on
     epd_2in9b_v3_read_busy();
 
-    epd_2in9b_v3_send_command(0x00);//panel setting
-    epd_2in9b_v3_send_data(0xBB);//128x296, LUT from REG，KW/R mode, gate scan up, source shift right, booster on, no RST
+    epd_2in9b_v3_send_command(0x00); //panel setting
+    epd_2in9b_v3_send_data(0xBB); //128x296, LUT from REG，KW/R mode, gate scan up, source shift right, booster on, no RST
 
-    // epd_2in9b_v3_send_command(0x30);//PLL control
-    // epd_2in9b_v3_send_data (0x3C);
+    epd_2in9b_v3_send_command(0x50); //VCOM and data interval
+    epd_2in9b_v3_send_data(0x47);
 
-    epd_2in9b_v3_send_command(0x50);//VCOM and data interval
-    epd_2in9b_v3_send_data(0xC7);   //WBmode:VBDF 17|D7 VBDW 97 VBDB 57 //This has to do with border data
-                                    //WBRmode:VBDF F7 VBDW 77 VBDB 37  VBDR B7
-    edp_set_lut();
     epd_2in9b_v3_read_busy();
-
-
-    // epd_2in9b_v3_send_read_command(0xA2);
 }
 
 /******************************************************************************
@@ -197,24 +187,30 @@ void epd_2in9b_v3_display(const UBYTE *blackimage, const UBYTE *ryimage)
     Width = (EPD_2IN9B_V3_WIDTH % 8 == 0)? (EPD_2IN9B_V3_WIDTH / 8 ): (EPD_2IN9B_V3_WIDTH / 8 + 1);
     Height = EPD_2IN9B_V3_HEIGHT;
 
-    epd_2in9b_v3_send_command(0x10);
-    for (UWORD j = 0; j < Height; j++) {
-        for (UWORD i = 0; i < Width; i++) {
-            epd_2in9b_v3_send_data(blackimage[i + j * Width]);
+    if (blackimage != NULL) {
+        epd_2in9b_v3_send_command(0x10);
+        for (UWORD j = 0; j < Height; j++) {
+            for (UWORD i = 0; i < Width; i++) {
+                epd_2in9b_v3_send_data(blackimage[i + j * Width]);
+            }
         }
+        // epd_2in9b_v3_send_command(0x92);
     }
-    // epd_2in9b_v3_send_command(0x92);
     
-    epd_2in9b_v3_send_command(0x13);
-    for (UWORD j = 0; j < Height; j++) {
-        for (UWORD i = 0; i < Width; i++) {
-            epd_2in9b_v3_send_data(ryimage[i + j * Width]);
+    if (ryimage != NULL) {
+        epd_2in9b_v3_send_command(0x13);
+        for (UWORD j = 0; j < Height; j++) {
+            for (UWORD i = 0; i < Width; i++) {
+                epd_2in9b_v3_send_data(ryimage[i + j * Width]);
+            }
         }
+        // epd_2in9b_v3_send_command(0x92);
     }
-    // epd_2in9b_v3_send_command(0x92);
 
-    epd_2in9b_v3_send_command(0x12);
-    epd_2in9b_v3_read_busy();
+    if (blackimage != NULL || ryimage != NULL) {
+        epd_2in9b_v3_send_command(0x12);
+        epd_2in9b_v3_read_busy();
+    }
 }
 
 /******************************************************************************

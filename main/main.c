@@ -12,27 +12,33 @@
 #include "esp_log.h"
 #include "soc/io_mux_reg.h"
 #include "test_screens/test_screens.h"
+#include "luts/luts.h"
 
 static const char* TAG = "main";
 
+extern const unsigned char horizontal_quadrants[];
+extern const unsigned char vertical_quadrants[];
+extern const unsigned char four_quadrants[];
+
 void app_main(void)
 {
-
-    // horizontal_quadrants[];
-    // vertical_quadrants[];
-    // four_quadrants[];
-
     vTaskDelay(50 / portTICK_PERIOD_MS);
 
-    // initialize gpios
     ESP_LOGI(TAG, "Init GPIOs\n");
     epd_gpio_config();
 
     ESP_LOGI(TAG, "Init screen\n");
     epd_2in9b_v3_init();
 
-    ESP_LOGI(TAG, "print screen\n");
-    epd_2in9b_v3_display(NULL, NULL);
+    ESP_LOGI(TAG, "Clear screen\n");
+    edp_set_lut();
+    epd_2in9b_v3_clear();
+
+    /* Test code starts here */
+
+
+
+    /* Test code ends here */
 
     int i = 0;
     for (;;) {

@@ -37,9 +37,15 @@
 #define EPD_2IN9B_V3_WIDTH       128
 #define EPD_2IN9B_V3_HEIGHT      296
 
+void epd_2in9b_v3_reset(void);
+void epd_2in9b_v3_send_read_command(UBYTE Reg);
+void epd_2in9b_v3_send_command(UBYTE Reg);
+void epd_2in9b_v3_send_data(UBYTE Data);
+void epd_2in9b_v3_read_busy(void);
 void epd_2in9b_v3_init(void);
 void epd_2in9b_v3_clear(void);
 void epd_2in9b_v3_display(const UBYTE *blackimage, const UBYTE *ryimage);
 void epd_2in9b_v3_sleep(void);
+
 
 #endif

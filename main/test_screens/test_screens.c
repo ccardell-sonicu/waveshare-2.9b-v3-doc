@@ -295,7 +295,7 @@ const unsigned char four_quadrants[] = {
 0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,
 0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,
 0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,
-}
+};
 
 const unsigned char horizontal_quadrants[] = {
 0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,
@@ -594,7 +594,7 @@ const unsigned char horizontal_quadrants[] = {
 0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,
 0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,
 0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,
-}
+};
 
 const unsigned char vertical_quadrants[] = {
 0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,
@@ -893,4 +893,4 @@ const unsigned char vertical_quadrants[] = {
 0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,
 0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,
 0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,0Xff,
-}
+};

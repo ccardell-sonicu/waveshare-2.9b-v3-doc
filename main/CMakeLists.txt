@@ -1,4 +1,4 @@
-idf_component_register(SRCS "test_screens.c" "main.c"
+idf_component_register(SRCS "main.c"
                     "fonts/font8.c"
                     "fonts/font12.c"
                     "fonts/font16.c"

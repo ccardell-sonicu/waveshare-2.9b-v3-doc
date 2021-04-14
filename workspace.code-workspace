@@ -15,7 +15,9 @@
 			"iterator": "c",
 			"string": "c",
 			"string_view": "c",
-			"vector": "c"
+			"vector": "c",
+			"edp_2in9b_v3.h": "c",
+			"luts.h": "c"
 		},
 		"idf.port": "/dev/cu.SLAB_USBtoUART",
 		"idf.flashType": "UART",
