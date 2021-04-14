@@ -37,7 +37,7 @@ void app_main(void)
     /* Test code starts here */
 
     ESP_LOGI(TAG, "Print four quadrents to screen\n");
-    epd_2in9b_v3_display(NULL, four_quadrants);
+    epd_2in9b_v3_display(four_quadrants, NULL);
     vTaskDelay(1500 / portTICK_PERIOD_MS);
 
     ESP_LOGI(TAG, "Updating LUT\n");

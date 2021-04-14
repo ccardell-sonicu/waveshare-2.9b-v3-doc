@@ -140,10 +140,10 @@ void epd_2in9b_v3_init(void)
     epd_2in9b_v3_read_busy();
 
     epd_2in9b_v3_send_command(0x00); //panel setting
-    epd_2in9b_v3_send_data(0xBB); //128x296, LUT from REG，KW/R mode, gate scan up, source shift right, booster on, no RST
+    epd_2in9b_v3_send_data(0xAB); //128x296, LUT from REG，KW/R mode, gate scan up, source shift right, booster on, no RST
 
     epd_2in9b_v3_send_command(0x50); //VCOM and data interval
-    epd_2in9b_v3_send_data(0x47);
+    epd_2in9b_v3_send_data(0x87);
 
     epd_2in9b_v3_read_busy();
 }
@@ -161,7 +161,7 @@ void epd_2in9b_v3_clear(void)
     epd_2in9b_v3_send_command(0x10);
     for (UWORD j = 0; j < Height; j++) {
         for (UWORD i = 0; i < Width; i++) {
-            epd_2in9b_v3_send_data(0xFF);
+            epd_2in9b_v3_send_data(0x00);
         }
     }
 
