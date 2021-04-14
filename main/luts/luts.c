@@ -90,7 +90,7 @@ const UBYTE lut_bw_quick[] =
 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, //3
 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, //4
 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, //5
-//0x00, 0x01, 0x00, 0x00, 0x00, 0x01, //6
+0x00, 0x01, 0x00, 0x00, 0x00, 0x01, //6
 //0x00, 0x01, 0x00, 0x00, 0x00, 0x01, //7
 //0x00, 0x01, 0x00, 0x00, 0x00, 0x01, //8
 //0x00, 0x01, 0x00, 0x00, 0x00, 0x01, //9
@@ -212,14 +212,14 @@ void edp_set_reduced_lut(void) {
     
     epd_2in9b_v3_send_command(LUT_BLACK_TO_WHITE);                      //bw r
     for(count = 0; count < 60; count++) {
-        // epd_2in9b_v3_send_data(lut_bw_quick[count]);
-        epd_2in9b_v3_send_data(0x00);
+        epd_2in9b_v3_send_data(lut_bw_quick[count]);
+        // epd_2in9b_v3_send_data(0x00);
     } 
 
     epd_2in9b_v3_send_command(LUT_WHITE_TO_BLACK);                      //wb w
     for(count = 0; count < 36; count++) {
-        epd_2in9b_v3_send_data(lut_wb_quick[count]);
-        // epd_2in9b_v3_send_data(0x00);
+        // epd_2in9b_v3_send_data(lut_wb_quick[count]);
+        epd_2in9b_v3_send_data(0x00);
     } 
 
     epd_2in9b_v3_send_command(LUT_BLACK_TO_BLACK);                      //bb b
