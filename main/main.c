@@ -21,6 +21,15 @@ static const char* TAG = "main";
 // extern const unsigned char four_quadrants[];
 extern const unsigned char black_image[];
 extern const unsigned char red_image[];
+extern sFONT Font8;
+extern sFONT Font12;
+extern sFONT Font16;
+extern sFONT Font20;
+extern sFONT Font24;
+extern PAINT Paint;
+
+unsigned char red_image_data[4736] = {0};
+unsigned char black_image_data[4736] = {0};
 
 void app_main(void)
 {
@@ -38,16 +47,53 @@ void app_main(void)
 
     /* Test code starts here */
 
-    ESP_LOGI(TAG, "Print black white red image to screen\n");
-    epd_2in9b_v3_display(black_image, red_image);
-    vTaskDelay(500 / portTICK_PERIOD_MS);
+    // Write hello world to screen
+    Paint.Image = black_image_data;
+    Paint.Width = 128;
+    Paint.Height = 296; 
+    Paint.WidthMemory = Paint.Width;
+    Paint.HeightMemory = Paint.Height; 
+    Paint.Color =  BLACK;  
+    Paint.Rotate = 0;
+    Paint.Mirror = MIRROR_HORIZONTAL; 
+    Paint.WidthByte = Paint.Width / 8;
+    Paint.HeightByte = Paint.Height / 8;   
+    Paint.Scale = 2;
+
+
+    paint_draw_string(0, 10, "Hello World", &Font16, BLACK, WHITE);
+
+    paint_draw_string(0, 28, "Font 8", &Font8, BLACK, WHITE);
+    paint_draw_string(0, 38, "Font 12", &Font12, BLACK, WHITE);
+    paint_draw_string(0, 52, "Font 16", &Font16, BLACK, WHITE);
+    paint_draw_string(0, 70, "Font 20", &Font20, BLACK, WHITE);
+    paint_draw_string(0, 92, "Font 24", &Font24, BLACK, WHITE);
+    Paint.Scale = 4;
+    paint_draw_string(0, 118, "48", &Font24, BLACK, WHITE);
+
+
+    // int j;
+    // printf("\n\n\n");
+    // for (j = 0; j < 4736; j++) {
+    //     printf("0x%02hhX, ", Paint.Image[j]);
+    //     if ((j + 1) % 16 == 0) printf("\n");
+    // }
+    // printf("\n\n\n");
+
+    epd_2in9b_v3_display(Paint.Image, NULL);
+
+
+    // ESP_LOGI(TAG, "Print black white red image to screen\n");
+    // epd_2in9b_v3_display(black_image, red_image);
+    // vTaskDelay(500 / portTICK_PERIOD_MS);
 
     /* Test code ends here */
 
     int i = 0;
     for (;;) {
         vTaskDelay(500 / portTICK_PERIOD_MS);
-        ESP_LOGI(TAG, "loop %d\n", i++);
+        // ESP_LOGI(TAG, "loop %d\n", i++);
+        printf(".");
     }
 }
 

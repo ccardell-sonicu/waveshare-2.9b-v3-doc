@@ -3,6 +3,7 @@
 #include "gui_paint.h"
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h> //memset()
 #include <math.h>
 
@@ -193,8 +194,10 @@ void paint_draw_char(UWORD Xpoint, UWORD Ypoint, const char Acsii_Char,
     const unsigned char *ptr = &Font->table[Char_Offset];
 
     for (Page = 0; Page < Font->Height; Page ++ ) {
-        for (Column = 0; Column < Font->Width; Column ++ ) {
+        // printf("Page: %d - ", Page);
 
+        for (Column = 0; Column < Font->Width; Column ++ ) {
+            // printf("Column: %d, ", Column);
             //To determine whether the font background color and screen background color is consistent
             if (FONT_BACKGROUND == Color_Background) { //this process is to speed up the scan
                 if (*ptr & (0x80 >> (Column % 8)))
@@ -215,6 +218,7 @@ void paint_draw_char(UWORD Xpoint, UWORD Ypoint, const char Acsii_Char,
         }// Write a line
         if (Font->Width % 8 != 0)
             ptr++;
+        // printf("\n");
     }// Write all
 }
 
