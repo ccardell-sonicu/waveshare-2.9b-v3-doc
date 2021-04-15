@@ -63,15 +63,15 @@ void app_main(void)
     Paint.Scale = 2;
 
 
-    paint_draw_string(0, 10, "According to all known laws of aviation, there is no way a bee should be able to fly. Its wings are too small to get its fat little body off the ground.", &Font16, BLACK, WHITE);
 
-    // paint_draw_string(0, 28, "0123456789", &Font8, BLACK, WHITE);
-    // paint_draw_string(0, 38, "0123456789", &Font12, BLACK, WHITE);
-    // paint_draw_string(0, 52, "0123456789", &Font16, BLACK, WHITE);
-    // paint_draw_string(0, 70, "Font 20", &Font20, BLACK, WHITE);
-    // paint_draw_string(0, 92, "Font 24", &Font24, BLACK, WHITE);
-    // Paint.Scale = 4;
-    // paint_draw_string(0, 118, "48", &Font24, BLACK, WHITE);
+    paint_draw_string(10, 0, "0123456789 ABCDEFGHIJKLMNOPQRSTUVWXYZ", &Font8, BLACK, WHITE);
+    paint_draw_string(10, 10, "0123456789 ABCDEFGHIJKLMNOPQRSTUVWXYZ", &Font12, BLACK, WHITE);
+    paint_draw_string(10, 24, "0123456789", &Font16, BLACK, WHITE);
+    paint_draw_string(10, 42, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", &Font16, BLACK, WHITE);
+    paint_draw_string(10, 60, "0123456789", &Font20, BLACK, WHITE);
+    paint_draw_string(10, 82, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", &Font20, BLACK, WHITE);
+    paint_draw_string(10, 104, "0123456789", &Font24, BLACK, WHITE);
+
 
 
     // int j;

@@ -13,41 +13,41 @@
 * | Info        :
 * -----------------------------------------------------------------------------
 * V3.2(2020-07-23):
-* 1. Change: paint_set_scale(UBYTE scale)
+* 1. Change: Paint_SetScale(UBYTE scale)
 *			Add scale 7 for 5.65f e-Parper
-* 2. Change: paint_set_pixel(UWORD Xpoint, UWORD Ypoint, UWORD Color)  
+* 2. Change: Paint_SetPixel(UWORD Xpoint, UWORD Ypoint, UWORD Color)  
 * 			Add the branch for scale 7
-* 3. Change: paint_clear(UWORD Color)
+* 3. Change: Paint_Clear(UWORD Color)
 *			Add the branch for scale 7
 *
 * V3.1(2019-10-10):
 * 1. Add gray level
 *   PAINT Add Scale
-* 2. Add void paint_set_scale(UBYTE scale);
+* 2. Add void Paint_SetScale(UBYTE scale);
 * 
 * V3.0(2019-04-18):
 * 1.Change: 
-*    paint_draw_point(..., DOT_STYLE DOT_STYLE)
-* => paint_draw_point(..., DOT_STYLE Dot_Style)
-*    paint_draw_line(..., LINE_STYLE Line_Style, DOT_PIXEL Dot_Pixel)
-* => paint_draw_line(..., DOT_PIXEL Line_width, LINE_STYLE Line_Style)
-*    paint_draw_rectangle(..., DRAW_FILL Filled, DOT_PIXEL Dot_Pixel)
-* => paint_draw_rectangle(..., DOT_PIXEL Line_width, DRAW_FILL Draw_Fill)
-*    paint_draw_circle(..., DRAW_FILL Draw_Fill, DOT_PIXEL Dot_Pixel)
-* => paint_draw_circle(..., DOT_PIXEL Line_width, DRAW_FILL Draw_Filll)
+*    Paint_DrawPoint(..., DOT_STYLE DOT_STYLE)
+* => Paint_DrawPoint(..., DOT_STYLE Dot_Style)
+*    Paint_DrawLine(..., LINE_STYLE Line_Style, DOT_PIXEL Dot_Pixel)
+* => Paint_DrawLine(..., DOT_PIXEL Line_width, LINE_STYLE Line_Style)
+*    Paint_DrawRectangle(..., DRAW_FILL Filled, DOT_PIXEL Dot_Pixel)
+* => Paint_DrawRectangle(..., DOT_PIXEL Line_width, DRAW_FILL Draw_Fill)
+*    Paint_DrawCircle(..., DRAW_FILL Draw_Fill, DOT_PIXEL Dot_Pixel)
+* => Paint_DrawCircle(..., DOT_PIXEL Line_width, DRAW_FILL Draw_Filll)
 *
 * -----------------------------------------------------------------------------
 * V2.0(2018-11-15):
-* 1.add: paint_new_image()
+* 1.add: Paint_NewImage()
 *    Create an image's properties
-* 2.add: paint_select_image()
+* 2.add: Paint_SelectImage()
 *    Select the picture to be drawn
-* 3.add: paint_set_rotate()
+* 3.add: Paint_SetRotate()
 *    Set the direction of the cache    
 * 4.add: Paint_RotateImage() 
 *    Can flip the picture, Support 0-360 degrees, 
 *    but only 90.180.270 rotation is better
-* 4.add: paint_set_mirroring() 
+* 4.add: Paint_SetMirroring() 
 *    Can Mirroring the picture, horizontal, vertical, origin
 * 5.add: Paint_DrawString_CN() 
 *    Can display Chinese(GB1312)   
@@ -75,10 +75,12 @@
 * THE SOFTWARE.
 *
 ******************************************************************************/
-#ifndef _GUI_PAINT_H_
-#define _GUI_PAINT_H_
+#ifndef __GUI_PAINT_H
+#define __GUI_PAINT_H
 
-#include "../fonts/fonts.h"
+#include "utility/Debug.h"
+#include "DEV_Config.h"
+#include "fonts.h"
 
 /**
  * Image attributes
@@ -187,34 +189,34 @@ typedef struct {
 extern PAINT_TIME sPaint_time;
 
 //init and Clear
-void paint_new_image(UBYTE *image, UWORD Width, UWORD Height, UWORD Rotate, UWORD Color);
-void paint_select_image(UBYTE *image);
-void paint_set_rotate(UWORD Rotate);
-void paint_set_mirroring(UBYTE mirror);
-void paint_set_pixel(UWORD Xpoint, UWORD Ypoint, UWORD Color);
-void paint_set_scale(UBYTE scale);
+void Paint_NewImage(UBYTE *image, UWORD Width, UWORD Height, UWORD Rotate, UWORD Color);
+void Paint_SelectImage(UBYTE *image);
+void Paint_SetRotate(UWORD Rotate);
+void Paint_SetMirroring(UBYTE mirror);
+void Paint_SetPixel(UWORD Xpoint, UWORD Ypoint, UWORD Color);
+void Paint_SetScale(UBYTE scale);
 
-void paint_clear(UWORD Color);
-void paint_clear_windows(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend, UWORD Color);
+void Paint_Clear(UWORD Color);
+void Paint_ClearWindows(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend, UWORD Color);
 
 //Drawing
-void paint_draw_point(UWORD Xpoint, UWORD Ypoint, UWORD Color, DOT_PIXEL Dot_Pixel, DOT_STYLE Dot_FillWay);
-void paint_draw_line(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend, UWORD Color, DOT_PIXEL Line_width, LINE_STYLE Line_Style);
-void paint_draw_rectangle(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend, UWORD Color, DOT_PIXEL Line_width, DRAW_FILL Draw_Fill);
-void paint_draw_circle(UWORD X_Center, UWORD Y_Center, UWORD Radius, UWORD Color, DOT_PIXEL Line_width, DRAW_FILL Draw_Fill);
+void Paint_DrawPoint(UWORD Xpoint, UWORD Ypoint, UWORD Color, DOT_PIXEL Dot_Pixel, DOT_STYLE Dot_FillWay);
+void Paint_DrawLine(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend, UWORD Color, DOT_PIXEL Line_width, LINE_STYLE Line_Style);
+void Paint_DrawRectangle(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend, UWORD Color, DOT_PIXEL Line_width, DRAW_FILL Draw_Fill);
+void Paint_DrawCircle(UWORD X_Center, UWORD Y_Center, UWORD Radius, UWORD Color, DOT_PIXEL Line_width, DRAW_FILL Draw_Fill);
 
 //Display string
-void paint_draw_char(UWORD Xstart, UWORD Ystart, const char Acsii_Char, sFONT* Font, UWORD Color_Foreground, UWORD Color_Background);
-void paint_draw_string(UWORD Xstart, UWORD Ystart, const char * pString, sFONT* Font, UWORD Color_Foreground, UWORD Color_Background);
-void paint_draw_num(UWORD Xpoint, UWORD Ypoint, int32_t Nummber, sFONT* Font, UWORD Color_Foreground, UWORD Color_Background);
-void paint_draw_time(UWORD Xstart, UWORD Ystart, PAINT_TIME *pTime, sFONT* Font, UWORD Color_Foreground, UWORD Color_Background);
+void Paint_DrawChar(UWORD Xstart, UWORD Ystart, const char Acsii_Char, sFONT* Font, UWORD Color_Foreground, UWORD Color_Background);
+void Paint_DrawString_EN(UWORD Xstart, UWORD Ystart, const char * pString, sFONT* Font, UWORD Color_Foreground, UWORD Color_Background);
+void Paint_DrawString_CN(UWORD Xstart, UWORD Ystart, const char * pString, cFONT* font, UWORD Color_Foreground, UWORD Color_Background);
+void Paint_DrawNum(UWORD Xpoint, UWORD Ypoint, int32_t Nummber, sFONT* Font, UWORD Color_Foreground, UWORD Color_Background);
+void Paint_DrawTime(UWORD Xstart, UWORD Ystart, PAINT_TIME *pTime, sFONT* Font, UWORD Color_Foreground, UWORD Color_Background);
 
 //pic
-void paint_draw_bitmap(const unsigned char* image_buffer);
-void paint_draw_image(const unsigned char *image_buffer, UWORD xStart, UWORD yStart, UWORD W_Image, UWORD H_Image); 
+void Paint_DrawBitMap(const unsigned char* image_buffer);
+void Paint_DrawImage(const unsigned char *image_buffer, UWORD xStart, UWORD yStart, UWORD W_Image, UWORD H_Image); 
 
-
-#endif /* _GUI_PAINT_H_ */
+#endif
 
 
 
