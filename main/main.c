@@ -49,8 +49,6 @@ void app_main(void)
 
     // Write hello world to screen
     Paint.Image = black_image_data;
-    // Paint.Width = 128;
-    // Paint.Height = 296; 
     Paint.Width = 296;
     Paint.Height = 128; 
     Paint.WidthMemory = Paint.Width;
@@ -62,16 +60,26 @@ void app_main(void)
     Paint.HeightByte = Paint.Height / 8;   
     Paint.Scale = 2;
 
+    //paint_draw_point(10, 10, WHITE, 1, DOT_FILL_AROUND);
 
-
-    paint_draw_string(10, 0, "0123456789 ABCDEFGHIJKLMNOPQRSTUVWXYZ", &Font8, BLACK, WHITE);
+    // paint_draw_string(10, 10, ".", &Font8, BLACK, WHITE);
     paint_draw_string(10, 10, "0123456789 ABCDEFGHIJKLMNOPQRSTUVWXYZ", &Font12, BLACK, WHITE);
-    paint_draw_string(10, 24, "0123456789", &Font16, BLACK, WHITE);
-    paint_draw_string(10, 42, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", &Font16, BLACK, WHITE);
-    paint_draw_string(10, 60, "0123456789", &Font20, BLACK, WHITE);
-    paint_draw_string(10, 82, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", &Font20, BLACK, WHITE);
-    paint_draw_string(10, 104, "0123456789", &Font24, BLACK, WHITE);
+    // paint_draw_string(10, 24, "0123456789", &Font16, BLACK, WHITE);
+    //paint_draw_string(10, 42, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", &Font16, BLACK, WHITE);
+    // paint_draw_string(10, 60, "0123456789", &Font20, BLACK, WHITE);
+    // paint_draw_string(10, 82, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", &Font20, BLACK, WHITE);
+    // paint_draw_string(10, 104, "0123456789", &Font24, BLACK, WHITE);
 
+    paint_draw_line(10, 30, Paint.Width - 10, 30, BLACK, 2, LINE_STYLE_DOTTED);
+    paint_draw_circle(50, 50, 10, BLACK, 2, DRAW_FILL_FULL);
+    paint_draw_rectangle(70, 70, 90, 90, BLACK, 2, DRAW_FILL_FULL);
+
+    Paint.Image = red_image_data;
+
+    paint_draw_circle(200, 50, 10, BLACK, 2, DRAW_FILL_EMPTY);
+    paint_draw_rectangle(200, 70, 270, 88, BLACK, 2, DRAW_FILL_EMPTY);
+
+    paint_draw_line(10, 120, Paint.Width - 10, 90, BLACK, 2, LINE_STYLE_SOLID);
 
 
     // int j;
@@ -82,7 +90,7 @@ void app_main(void)
     // }
     // printf("\n\n\n");
 
-    epd_2in9b_v3_display(Paint.Image, NULL);
+    epd_2in9b_v3_display(black_image_data, red_image_data);
 
 
     // ESP_LOGI(TAG, "Print black white red image to screen\n");

@@ -75,12 +75,12 @@
 * THE SOFTWARE.
 *
 ******************************************************************************/
-#include "GUI_Paint.h"
-#include "DEV_Config.h"
-#include "Debug.h"
+#include "gui_paint.h"
+#include "../main.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h> //memset()
+#include <stdio.h>
 #include <math.h>
 
 PAINT Paint;
@@ -137,10 +137,10 @@ parameter:
 void paint_set_rotate(UWORD Rotate)
 {
     if(Rotate == ROTATE_0 || Rotate == ROTATE_90 || Rotate == ROTATE_180 || Rotate == ROTATE_270) {
-        // Debug("Set image Rotate %d\r\n", Rotate);
+        // printf("Set image Rotate %d\r\n", Rotate);
         Paint.Rotate = Rotate;
     } else {
-        Debug("rotate = 0, 90, 180, 270\r\n");
+        printf("rotate = 0, 90, 180, 270\r\n");
     }
 }
 
@@ -153,10 +153,10 @@ void paint_set_mirroring(UBYTE mirror)
 {
     if(mirror == MIRROR_NONE || mirror == MIRROR_HORIZONTAL || 
         mirror == MIRROR_VERTICAL || mirror == MIRROR_ORIGIN) {
-        // Debug("mirror image x:%s, y:%s\r\n",(mirror & 0x01)? "mirror":"none", ((mirror >> 1) & 0x01)? "mirror":"none");
+        // printf("mirror image x:%s, y:%s\r\n",(mirror & 0x01)? "mirror":"none", ((mirror >> 1) & 0x01)? "mirror":"none");
         Paint.Mirror = mirror;
     } else {
-        Debug("mirror should be MIRROR_NONE, MIRROR_HORIZONTAL, \
+        printf("mirror should be MIRROR_NONE, MIRROR_HORIZONTAL, \
         MIRROR_VERTICAL or MIRROR_ORIGIN\r\n");
     }    
 }
@@ -176,8 +176,8 @@ void paint_set_scale(UBYTE scale)
 		Paint.WidthByte = (Paint.WidthMemory % 2 == 0)? (Paint.WidthMemory / 2 ): (Paint.WidthMemory / 2 + 1);
 	}
 	else {
-        Debug("Set Scale Input parameter error\r\n");
-        Debug("Scale Only support: 2 4 7\r\n");
+        printf("Set Scale Input parameter error\r\n");
+        printf("Scale Only support: 2 4 7\r\n");
     }
 }
 /******************************************************************************
@@ -190,7 +190,7 @@ parameter:
 void paint_set_pixel(UWORD Xpoint, UWORD Ypoint, UWORD Color)
 {
     if(Xpoint > Paint.Width || Ypoint > Paint.Height){
-        Debug("Exceeding display boundaries\r\n");
+        printf("Exceeding display boundaries\r\n");
         return;
     }      
     UWORD X, Y;
@@ -233,7 +233,7 @@ void paint_set_pixel(UWORD Xpoint, UWORD Ypoint, UWORD Color)
     }
 
     if(X > Paint.WidthMemory || Y > Paint.HeightMemory){
-        Debug("Exceeding display boundaries\r\n");
+        printf("Exceeding display boundaries\r\n");
         return;
     }
     
@@ -241,12 +241,20 @@ void paint_set_pixel(UWORD Xpoint, UWORD Ypoint, UWORD Color)
         // UDOUBLE Addr = X / 8 + Y * Paint.WidthByte;
         UDOUBLE Addr = Y / 8 + X * Paint.HeightByte;
         UBYTE Rdata = Paint.Image[Addr];
-        if(Color == BLACK)
+        if(Color == BLACK) {
             // Paint.Image[Addr] = Rdata & ~(0x80 >> (X % 8));
-            Paint.Image[Addr] = Rdata & ~(0x80 >> (Y % 8));
-        else
-            // Paint.Image[Addr] = Rdata | (0x80 >> (X % 8));
             Paint.Image[Addr] = Rdata | (0x80 >> (Y % 8));
+            // printf("\n\nBlack %d, %d -> %d", Addr, Rdata, Rdata & ~(0x80 >> (Y % 8)));
+            // printf("\n0x%02hhX\n", Paint.Image[Addr]);
+
+        } else {
+            // Paint.Image[Addr] = Rdata | (0x80 >> (X % 8));
+            Paint.Image[Addr] = Rdata & ~(0x80 >> (Y % 8));
+            // printf("\n\nwhite %d, %d -> %d", Addr, Rdata, Rdata | (0x80 >> (Y % 8)));
+            // printf("\n0x%02hhX\n", Paint.Image[Addr]);
+
+        }
+
 
     }else if(Paint.Scale == 4){
         UDOUBLE Addr = X / 4 + Y * Paint.WidthByte;
@@ -376,23 +384,27 @@ void paint_draw_point(UWORD Xpoint, UWORD Ypoint, UWORD Color,
                      DOT_PIXEL Dot_Pixel, DOT_STYLE Dot_Style)
 {
     if (Xpoint > Paint.Width || Ypoint > Paint.Height) {
-        Debug("paint_draw_point Input exceeds the normal display range\r\n");
+        printf("paint_draw_point Input exceeds the normal display range\r\n");
         return;
     }
 
     int16_t XDir_Num , YDir_Num;
     if (Dot_Style == DOT_FILL_AROUND) {
+        // printf("here4");
         for (XDir_Num = 0; XDir_Num < 2 * Dot_Pixel - 1; XDir_Num++) {
             for (YDir_Num = 0; YDir_Num < 2 * Dot_Pixel - 1; YDir_Num++) {
                 if(Xpoint + XDir_Num - Dot_Pixel < 0 || Ypoint + YDir_Num - Dot_Pixel < 0)
                     break;
                 // printf("x = %d, y = %d\r\n", Xpoint + XDir_Num - Dot_Pixel, Ypoint + YDir_Num - Dot_Pixel);
+                // printf(" (X: %d, Y: %d, Color: %d) ", Xpoint + XDir_Num - Dot_Pixel, Ypoint + YDir_Num - Dot_Pixel, Color);
                 paint_set_pixel(Xpoint + XDir_Num - Dot_Pixel, Ypoint + YDir_Num - Dot_Pixel, Color);
             }
         }
     } else {
+        // printf("here3");
         for (XDir_Num = 0; XDir_Num <  Dot_Pixel; XDir_Num++) {
             for (YDir_Num = 0; YDir_Num <  Dot_Pixel; YDir_Num++) {
+                // printf("here2");
                 paint_set_pixel(Xpoint + XDir_Num - 1, Ypoint + YDir_Num - 1, Color);
             }
         }
@@ -415,7 +427,7 @@ void paint_draw_line(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend,
 {
     if (Xstart > Paint.Width || Ystart > Paint.Height ||
         Xend > Paint.Width || Yend > Paint.Height) {
-        Debug("paint_draw_line Input exceeds the normal display range\r\n");
+        printf("paint_draw_line Input exceeds the normal display range\r\n");
         return;
     }
 
@@ -436,7 +448,7 @@ void paint_draw_line(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend,
         Dotted_Len++;
         //Painted dotted line, 2 point is really virtual
         if (Line_Style == LINE_STYLE_DOTTED && Dotted_Len % 3 == 0) {
-            //Debug("LINE_DOTTED\r\n");
+            //printf("LINE_DOTTED\r\n");
             paint_draw_point(Xpoint, Ypoint, IMAGE_BACKGROUND, Line_width, DOT_STYLE_DFT);
             Dotted_Len = 0;
         } else {
@@ -473,7 +485,7 @@ void paint_draw_rectangle(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend,
 {
     if (Xstart > Paint.Width || Ystart > Paint.Height ||
         Xend > Paint.Width || Yend > Paint.Height) {
-        Debug("Input exceeds the normal display range\r\n");
+        printf("Input exceeds the normal display range\r\n");
         return;
     }
 
@@ -505,7 +517,7 @@ void paint_draw_circle(UWORD X_Center, UWORD Y_Center, UWORD Radius,
                       UWORD Color, DOT_PIXEL Line_width, DRAW_FILL Draw_Fill)
 {
     if (X_Center > Paint.Width || Y_Center >= Paint.Height) {
-        Debug("paint_draw_circle Input exceeds the normal display range\r\n");
+        printf("paint_draw_circle Input exceeds the normal display range\r\n");
         return;
     }
 
@@ -576,7 +588,7 @@ void paint_draw_char(UWORD Xpoint, UWORD Ypoint, const char Acsii_Char,
     UWORD Page, Column;
 
     if (Xpoint > Paint.Width || Ypoint > Paint.Height) {
-        Debug("paint_draw_char Input exceeds the normal display range\r\n");
+        printf("paint_draw_char Input exceeds the normal display range\r\n");
         return;
     }
 
@@ -588,14 +600,18 @@ void paint_draw_char(UWORD Xpoint, UWORD Ypoint, const char Acsii_Char,
 
             //To determine whether the font background color and screen background color is consistent
             if (FONT_BACKGROUND == Color_Background) { //this process is to speed up the scan
-                if (*ptr & (0x80 >> (Column % 8)))
+                if (*ptr & (0x80 >> (Column % 8))) {
+                    // printf("top\n");
                     paint_set_pixel(Xpoint + Column, Ypoint + Page, Color_Foreground);
                     // paint_draw_point(Xpoint + Column, Ypoint + Page, Color_Foreground, DOT_PIXEL_DFT, DOT_STYLE_DFT);
+                }
             } else {
                 if (*ptr & (0x80 >> (Column % 8))) {
+                    // printf("middle %d\n", Color_Foreground);
                     paint_set_pixel(Xpoint + Column, Ypoint + Page, Color_Foreground);
                     // paint_draw_point(Xpoint + Column, Ypoint + Page, Color_Foreground, DOT_PIXEL_DFT, DOT_STYLE_DFT);
                 } else {
+                    // printf("bottom %d\n", Color_Background);
                     paint_set_pixel(Xpoint + Column, Ypoint + Page, Color_Background);
                     // paint_draw_point(Xpoint + Column, Ypoint + Page, Color_Background, DOT_PIXEL_DFT, DOT_STYLE_DFT);
                 }
@@ -626,7 +642,7 @@ void paint_draw_string(UWORD Xstart, UWORD Ystart, const char * pString,
     UWORD Ypoint = Ystart;
 
     if (Xstart > Paint.Width || Ystart > Paint.Height) {
-        Debug("paint_draw_string Input exceeds the normal display range\r\n");
+        printf("paint_draw_string Input exceeds the normal display range\r\n");
         return;
     }
 
@@ -642,7 +658,7 @@ void paint_draw_string(UWORD Xstart, UWORD Ystart, const char * pString,
             Xpoint = Xstart;
             Ypoint = Ystart;
         }
-        paint_draw_char(Xpoint, Ypoint, * pString, Font, Color_Background, Color_Foreground);
+        paint_draw_char(Xpoint, Ypoint, * pString, Font, Color_Foreground, Color_Background);
 
         //The next character of the address
         pString ++;
@@ -673,7 +689,7 @@ void paint_draw_num(UWORD Xpoint, UWORD Ypoint, int32_t Nummber,
     uint8_t *pStr = Str_Array;
 
     if (Xpoint > Paint.Width || Ypoint > Paint.Height) {
-        Debug("Paint_DisNum Input exceeds the normal display range\r\n");
+        printf("Paint_DisNum Input exceeds the normal display range\r\n");
         return;
     }
 
@@ -692,7 +708,7 @@ void paint_draw_num(UWORD Xpoint, UWORD Ypoint, int32_t Nummber,
     }
 
     //show
-    paint_draw_string(Xpoint, Ypoint, (const char*)pStr, Font, Color_Background, Color_Foreground);
+    paint_draw_string(Xpoint, Ypoint, (const char*)pStr, Font, Color_Foreground, Color_Background);
 }
 
 /******************************************************************************
@@ -713,14 +729,14 @@ void paint_draw_time(UWORD Xstart, UWORD Ystart, PAINT_TIME *pTime, sFONT* Font,
     UWORD Dx = Font->Width;
 
     //Write data into the cache
-    paint_draw_char(Xstart                           , Ystart, value[pTime->Hour / 10], Font, Color_Background, Color_Foreground);
-    paint_draw_char(Xstart + Dx                      , Ystart, value[pTime->Hour % 10], Font, Color_Background, Color_Foreground);
-    paint_draw_char(Xstart + Dx  + Dx / 4 + Dx / 2   , Ystart, ':'                    , Font, Color_Background, Color_Foreground);
-    paint_draw_char(Xstart + Dx * 2 + Dx / 2         , Ystart, value[pTime->Min / 10] , Font, Color_Background, Color_Foreground);
-    paint_draw_char(Xstart + Dx * 3 + Dx / 2         , Ystart, value[pTime->Min % 10] , Font, Color_Background, Color_Foreground);
-    paint_draw_char(Xstart + Dx * 4 + Dx / 2 - Dx / 4, Ystart, ':'                    , Font, Color_Background, Color_Foreground);
-    paint_draw_char(Xstart + Dx * 5                  , Ystart, value[pTime->Sec / 10] , Font, Color_Background, Color_Foreground);
-    paint_draw_char(Xstart + Dx * 6                  , Ystart, value[pTime->Sec % 10] , Font, Color_Background, Color_Foreground);
+    paint_draw_char(Xstart                           , Ystart, value[pTime->Hour / 10], Font, Color_Foreground, Color_Background);
+    paint_draw_char(Xstart + Dx                      , Ystart, value[pTime->Hour % 10], Font, Color_Foreground, Color_Background);
+    paint_draw_char(Xstart + Dx  + Dx / 4 + Dx / 2   , Ystart, ':'                    , Font, Color_Foreground, Color_Background);
+    paint_draw_char(Xstart + Dx * 2 + Dx / 2         , Ystart, value[pTime->Min / 10] , Font, Color_Foreground, Color_Background);
+    paint_draw_char(Xstart + Dx * 3 + Dx / 2         , Ystart, value[pTime->Min % 10] , Font, Color_Foreground, Color_Background);
+    paint_draw_char(Xstart + Dx * 4 + Dx / 2 - Dx / 4, Ystart, ':'                    , Font, Color_Foreground, Color_Background);
+    paint_draw_char(Xstart + Dx * 5                  , Ystart, value[pTime->Sec / 10] , Font, Color_Foreground, Color_Background);
+    paint_draw_char(Xstart + Dx * 6                  , Ystart, value[pTime->Sec % 10] , Font, Color_Foreground, Color_Background);
 }
 
 /******************************************************************************
