@@ -33,7 +33,7 @@ unsigned char black_image_data[4736] = {0};
 
 void app_main(void)
 {
-    vTaskDelay(50 / portTICK_PERIOD_MS);
+    vTaskDelay(5 / portTICK_PERIOD_MS);
 
     ESP_LOGI(TAG, "Init GPIOs\n");
     epd_gpio_config();
@@ -58,44 +58,44 @@ void app_main(void)
     Paint.Mirror = MIRROR_NONE; 
     Paint.WidthByte = Paint.Width / 8;
     Paint.HeightByte = Paint.Height / 8;   
-    Paint.Scale = 2;
+    Paint.Scale = 1;
 
     paint_draw_string(Paint.Width / 2 - 7 * 8 - 4, 0, "00:12:34:56:78:90", &Font12, BLACK, WHITE);
-    paint_draw_line(0, 14, Paint.Width, 14, BLACK, 1, LINE_STYLE_SOLID);
+    paint_draw_line(1, 14, Paint.Width - 1, 14, BLACK, 1, LINE_STYLE_SOLID);
 
+    //left and right min max in series
+    paint_draw_line(Paint.Width / 2, 19, Paint.Width / 2, Paint.Height, BLACK, 1, LINE_STYLE_SOLID); // dotted line to separate sides
+    // paint_draw_line(Paint.Width / 2, 19, Paint.Width / 2, Paint.Height, BLACK, 1, LINE_STYLE_DOTTED); // dotted line to separate sides
+    paint_draw_string((Paint.Width / 4) - (7 * 9) - 4, Paint.Height * 3 / 4 + 12, "min: 24 C max: 56 C", &Font12, BLACK, WHITE);
+    paint_draw_string((Paint.Width * 3 / 4) - (7 * 9) - 4,  Paint.Height * 3 / 4 + 12, "min: 25 C max: 54 C", &Font12, BLACK, WHITE);
+  
+    // // left min max stacked
+    // paint_draw_string((Paint.Width / 4) - (7 * 4) - 4,  Paint.Height * 3 / 4 + 6, "min: 25 C", &Font12, BLACK, WHITE);
+    // paint_draw_string((Paint.Width / 4) - (7 * 4) - 4,  Paint.Height * 3 / 4 + 12 + 6, "max: 54 C", &Font12, BLACK, WHITE);
 
-    // paint_draw_string(10, 24, "0123456789", &Font16, BLACK, WHITE);
-    // paint_draw_string(10, 42, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", &Font16, BLACK, WHITE);
-    // paint_draw_string(10, 60, "0123456789", &Font20, BLACK, WHITE);
-    // paint_draw_string(10, 82, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", &Font20, BLACK, WHITE);
-    // paint_draw_string(10, 104, "0123456789", &Font24, BLACK, WHITE);
+    // //right min max stacked
+    // paint_draw_string((Paint.Width * 3 / 4) - (7 * 4) - 4,  Paint.Height * 3 / 4 + 6, "min: 25 C", &Font12, BLACK, WHITE);
+    // paint_draw_string((Paint.Width * 3 / 4) - (7 * 4) - 4,  Paint.Height * 3 / 4 + 12 + 6, "max: 54 C", &Font12, BLACK, WHITE);
 
-    // paint_draw_line(10, 30, Paint.Width - 10, 30, BLACK, 2, LINE_STYLE_DOTTED);
-    // paint_draw_circle(50, 50, 10, BLACK, 2, DRAW_FILL_FULL);
-    // paint_draw_rectangle(70, 70, 90, 90, BLACK, 2, DRAW_FILL_FULL);
+    //right and left rect
+    // int rect_width = Paint.Width * 3 / 8;
+    // paint_draw_rectangle((Paint.Width / 4) - rect_width / 2, Paint.Height / 4, (Paint.Width / 4) + rect_width / 2, Paint.Height * 3 / 4, BLACK, 1, DRAW_FILL_EMPTY);
+    // paint_draw_rectangle((Paint.Width * 3 / 4) - rect_width / 2, Paint.Height / 4, (Paint.Width * 3 / 4) + rect_width / 2, Paint.Height * 3 / 4, BLACK, 1, DRAW_FILL_EMPTY);
+    
 
-    // Paint.Image = red_image_data;
+    // humidity
+    paint_draw_string((Paint.Width / 4) - (11 * 3), Paint.Height / 2 + 20, "50% RH", &Font16, BLACK, WHITE);
+    paint_draw_string((Paint.Width * 3 / 4) - (11 * 3), Paint.Height / 2 + 20, "49% RH", &Font16, BLACK, WHITE);
 
-    // paint_draw_circle(200, 50, 10, BLACK, 2, DRAW_FILL_EMPTY);
-    // paint_draw_rectangle(200, 70, 270, 88, BLACK, 2, DRAW_FILL_EMPTY);
+    // temp
+    Paint.Scale = 2;
+    paint_draw_string((Paint.Width / 4) - (17 * 3), Paint.Height / 4, "26C", &Font24, BLACK, WHITE);
+        
+    Paint.Image = red_image_data;
+    paint_draw_string((Paint.Width * 3 / 4) - (17 * 3), Paint.Height / 4, "54C", &Font24, RED, WHITE);
 
-    // paint_draw_line(10, 120, Paint.Width - 10, 90, BLACK, 2, LINE_STYLE_SOLID);
-
-
-    // int j;
-    // printf("\n\n\n");
-    // for (j = 0; j < 4736; j++) {
-    //     printf("0x%02hhX, ", Paint.Image[j]);
-    //     if ((j + 1) % 16 == 0) printf("\n");
-    // }
-    // printf("\n\n\n");
-
+    // load image to screen
     epd_2in9b_v3_display(black_image_data, red_image_data);
-
-
-    // ESP_LOGI(TAG, "Print black white red image to screen\n");
-    // epd_2in9b_v3_display(black_image, red_image);
-    // vTaskDelay(500 / portTICK_PERIOD_MS);
 
     /* Test code ends here */
 
