@@ -198,10 +198,11 @@ const sGlyph DejaVu_Sans_Mono_16Glyphs[] = {
 	  {  1036,   6,  15,  11,    2,  -12 } // '}'
 };
 
-
+// when a character is written (xpoint, ypoint) is at the line the characters are written at
+// (i.e. where the underline would be if written below a character)
 sFONTCUSTOM CustomFont32 = {    
   DejaVu_Sans_Mono_16Bitmaps, /* *bitmap_table */
   DejaVu_Sans_Mono_16Glyphs, /* *glyph_table */
-  -10, /* y_min */
-  4 /* y_max */
+  -10, /* y_min: the delta from the ypoint */
+  4 /* y_max: the delta from the ypoint*/
 };
