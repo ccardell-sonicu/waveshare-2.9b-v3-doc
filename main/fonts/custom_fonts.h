@@ -17,6 +17,8 @@ typedef struct _tFontCustom
 {    
   const uint8_t *bitmap_table;
   const sGlyph *glyph_table;
+  const int y_min;
+  const int y_max;
 } sFONTCUSTOM;
 
 #endif /* _CUSTOM_FONTS_H_ */

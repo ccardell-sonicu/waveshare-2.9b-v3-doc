@@ -200,12 +200,8 @@ const sGlyph DejaVu_Sans_Mono_16Glyphs[] = {
 
 
 sFONTCUSTOM CustomFont32 = {    
-  DejaVu_Sans_Mono_16Bitmaps,
-  DejaVu_Sans_Mono_16Glyphs,
+  DejaVu_Sans_Mono_16Bitmaps, /* *bitmap_table */
+  DejaVu_Sans_Mono_16Glyphs, /* *glyph_table */
+  -10, /* y_min */
+  4 /* y_max */
 };
-
-// sFONT CustomFont32 = {
-//   DejaVu_Sans_Mono_32,
-//   19, /* Width */
-//   38, /* Height */
-// };

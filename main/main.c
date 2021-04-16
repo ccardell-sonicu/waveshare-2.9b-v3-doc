@@ -38,33 +38,51 @@ void app_main(void)
     // vTaskDelay(5 / portTICK_PERIOD_MS);
 
     // ESP_LOGI(TAG, "Init GPIOs\n");
-    epd_gpio_config();
+    // epd_gpio_config();
 
-    // ESP_LOGI(TAG, "Init screen\n");
-    epd_2in9b_v3_init();
+    // // ESP_LOGI(TAG, "Init screen\n");
+    // epd_2in9b_v3_init();
 
-    // ESP_LOGI(TAG, "Clear screen\n");
-    edp_set_lut();
-    epd_2in9b_v3_clear();
+    // // ESP_LOGI(TAG, "Clear screen\n");
+    // edp_set_lut();
+    // epd_2in9b_v3_clear();
 
-    /* Test code starts here */
+    // /* Test code starts here */
 
-    // Write hello world to screen
-    Paint.Image = black_image_data;
-    Paint.Width = 296;
-    Paint.Height = 128; 
-    Paint.WidthMemory = Paint.Width;
-    Paint.HeightMemory = Paint.Height; 
-    Paint.Color =  BLACK;  
-    Paint.Rotate = 0;
-    Paint.Mirror = MIRROR_NONE; 
-    Paint.WidthByte = Paint.Width / 8;
-    Paint.HeightByte = Paint.Height / 8;   
-    Paint.Scale = 1;
+    // // Write hello world to screen
+    // Paint.Image = black_image_data;
+    // Paint.Width = 296;
+    // Paint.Height = 128; 
+    // Paint.WidthMemory = Paint.Width;
+    // Paint.HeightMemory = Paint.Height; 
+    // Paint.Color =  BLACK;  
+    // Paint.Rotate = 0;
+    // Paint.Mirror = MIRROR_NONE; 
+    // Paint.WidthByte = Paint.Width / 8;
+    // Paint.HeightByte = Paint.Height / 8;   
+    // Paint.Scale = 1;
 
     // paint_draw_string(10, 14, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()-=_+<>,./?[]{}|`~;:", &CustomFont32, BLACK, WHITE);
-    paint_draw_string(10, 30, "|", &CustomFont32, BLACK, WHITE);
-    paint_draw_line(10, 30, Paint.Width - 1, 30, BLACK, 1, LINE_STYLE_SOLID);
+    // paint_draw_string(10, 30, "|", &CustomFont32, BLACK, WHITE);
+    // paint_draw_line(10, 30, Paint.Width - 1, 30, BLACK, 1, LINE_STYLE_SOLID);
+
+    int min = 0;
+    int max = 0;
+
+    int i;
+    for (i = 32; i < '}'; i++) {
+        sGlyph glyph = (&CustomFont32)->glyph_table[i - 32];
+
+        if ((glyph.yOffset + glyph.height) > max) {
+            max = (glyph.yOffset + glyph.height);
+        }
+
+        if ((glyph.yOffset + glyph.height) < min) {
+            min = (glyph.yOffset + glyph.height);
+        }
+    }
+
+    printf("min: %d, max: %d\n", min, max);
 
     // //left and right min max in series
     // paint_draw_line(Paint.Width / 2, 19, Paint.Width / 2, Paint.Height, BLACK, 1, LINE_STYLE_SOLID); // dotted line to separate sides
@@ -102,7 +120,7 @@ void app_main(void)
     //paint_draw_rectangle((Paint.Width * 3 / 4) - rect_width / 2, Paint.Height / 4 - 5, (Paint.Width * 3 / 4) + rect_width / 2, Paint.Height / 2 + 10, BLACK, 2, DRAW_FILL_EMPTY);
 
     // load image to screen
-    epd_2in9b_v3_display(black_image_data, red_image_data);
+    // epd_2in9b_v3_display(black_image_data, red_image_data);
 
     /* Test code ends here */
 
