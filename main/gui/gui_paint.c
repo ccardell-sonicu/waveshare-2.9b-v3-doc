@@ -586,20 +586,21 @@ void paint_draw_string(UWORD Xstart, UWORD Ystart, const char * pString,
     while (* pString != '\0') {
 
         glyph = Font->glyph_table[* pString - 32];
-        font_height = glyph.height - glyph.yOffset;
-        font_width =  glyph.width + glyph.xOffset;
+        // font_height = glyph.height - glyph.yOffset;
+        // font_width =  glyph.width + glyph.xOffset;
 
-        //if X direction filled , reposition to(Xstart,Ypoint),Ypoint is Y direction plus the Height of the character
-        if ((Xpoint + font_width ) > Paint.Width ) {
-            Xpoint = Xstart;
-            Ypoint += font_height;
-        }
+        // //if X direction filled , reposition to(Xstart,Ypoint),Ypoint is Y direction plus the Height of the character
+        // if ((Xpoint + font_width ) > Paint.Width ) {
+        //     Xpoint = Xstart;
+        //     Ypoint += font_height;
+        // }
 
-        // If the Y direction is full, reposition to(Xstart, Ystart)
-        if ((Ypoint  + font_height ) > Paint.Height ) {
-            Xpoint = Xstart;
-            Ypoint = Ystart;
-        }
+        // // If the Y direction is full, reposition to(Xstart, Ystart)
+        // if ((Ypoint  + font_height ) > Paint.Height ) {
+        //     Xpoint = Xstart;
+        //     Ypoint = Ystart;
+        // }
+
         paint_draw_char(Xpoint, Ypoint, * pString, Font, Color_Foreground, Color_Background);
 
         //The next character of the address
