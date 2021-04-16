@@ -78,7 +78,7 @@
 #ifndef _GUI_PAINT_H_
 #define _GUI_PAINT_H_
 
-#include "../fonts/fonts.h"
+#include "../fonts/custom_fonts.h"
 #include "../main.h"
 
 /**
@@ -205,10 +205,10 @@ void paint_draw_rectangle(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend, UW
 void paint_draw_circle(UWORD X_Center, UWORD Y_Center, UWORD Radius, UWORD Color, DOT_PIXEL Line_width, DRAW_FILL Draw_Fill);
 
 //Display string
-void paint_draw_char(UWORD Xstart, UWORD Ystart, const char Acsii_Char, sFONT* Font, UWORD Color_Foreground, UWORD Color_Background);
-void paint_draw_string(UWORD Xstart, UWORD Ystart, const char * pString, sFONT* Font, UWORD Color_Foreground, UWORD Color_Background);
-void paint_draw_num(UWORD Xpoint, UWORD Ypoint, int32_t Nummber, sFONT* Font, UWORD Color_Foreground, UWORD Color_Background);
-void paint_draw_time(UWORD Xstart, UWORD Ystart, PAINT_TIME *pTime, sFONT* Font, UWORD Color_Foreground, UWORD Color_Background);
+void paint_draw_char(UWORD Xstart, UWORD Ystart, const char Acsii_Char, sFONTCUSTOM* Font, UWORD Color_Foreground, UWORD Color_Background);
+void paint_draw_string(UWORD Xstart, UWORD Ystart, const char * pString, sFONTCUSTOM* Font, UWORD Color_Foreground, UWORD Color_Background);
+// void paint_draw_num(UWORD Xpoint, UWORD Ypoint, int32_t Nummber, sFONTCUSTOM* Font, UWORD Color_Foreground, UWORD Color_Background);
+// void paint_draw_time(UWORD Xstart, UWORD Ystart, PAINT_TIME *pTime, sFONTCUSTOM* Font, UWORD Color_Foreground, UWORD Color_Background);
 
 //pic
 void paint_draw_bitmap(const unsigned char* image_buffer);

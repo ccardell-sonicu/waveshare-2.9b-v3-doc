@@ -510,60 +510,51 @@ parameter:
     Color_Background : Select the background color
 ******************************************************************************/
 void paint_draw_char(UWORD Xpoint, UWORD Ypoint, const char Acsii_Char,
-                    sFONT* Font, UWORD Color_Foreground, UWORD Color_Background)
+                    sFONTCUSTOM* Font, UWORD Color_Foreground, UWORD Color_Background)
 {
-    UWORD Page, Column;
+    UWORD Row, Column;
 
     if (Xpoint > Paint.Width || Ypoint > Paint.Height) {
         printf("paint_draw_char Input exceeds the normal display range\r\n");
         return;
     }
+    
+    sGlyph glyph = Font->glyph_table[Acsii_Char - 32];
 
-    uint32_t Char_Offset = (Acsii_Char - ' ') * Font->Height * (Font->Width / 8 + (Font->Width % 8 ? 1 : 0));
-    const unsigned char *ptr = &Font->table[Char_Offset];
+    int height = glyph.height;
+    int width = glyph.width;
+    int offset = glyph.bitmapOffset;
 
-    for (Page = 0; Page < Font->Height; Page ++ ) {
-        for (Column = 0; Column < Font->Width; Column ++ ) {
+    const unsigned char *ptr = &Font->bitmap_table[offset];
+    UWORD bit = 0;
+
+    for (Row = 0; Row < height; Row ++ ) {
+        for (Column = 0; Column < width; Column ++ ) {
 
             //To determine whether the font background color and screen background color is consistent
             if (FONT_BACKGROUND == Color_Background) { //this process is to speed up the scan
-                if (*ptr & (0x80 >> (Column % 8))) {
-                    if (Paint.Scale == 2) {
-                        paint_set_pixel(Xpoint + Column * 2, Ypoint + Page * 2, Color_Foreground);
-                        paint_set_pixel(Xpoint + Column * 2, Ypoint + Page * 2 + 1, Color_Foreground);
-                        paint_set_pixel(Xpoint + Column * 2 + 1, Ypoint + Page * 2, Color_Foreground);
-                        paint_set_pixel(Xpoint + Column * 2 + 1, Ypoint + Page * 2 + 1, Color_Foreground);
-                    } else {
-                        paint_set_pixel(Xpoint + Column, Ypoint + Page, Color_Foreground);
-                    }
-                }
+                if (*ptr & (0x80 >> bit)) {
+                    paint_set_pixel(Xpoint + glyph.xOffset + Column , Ypoint + glyph.yOffset + Row, Color_Foreground);
+                } 
             } else {
-                if (*ptr & (0x80 >> (Column % 8))) {
-                    if (Paint.Scale == 2) {
-                        paint_set_pixel(Xpoint + Column * 2, Ypoint + Page * 2, Color_Foreground);
-                        paint_set_pixel(Xpoint + Column * 2, Ypoint + Page * 2 + 1, Color_Foreground);
-                        paint_set_pixel(Xpoint + Column * 2 + 1, Ypoint + Page * 2, Color_Foreground);
-                        paint_set_pixel(Xpoint + Column * 2 + 1, Ypoint + Page * 2 + 1, Color_Foreground);
-                    } else {
-                        paint_set_pixel(Xpoint + Column, Ypoint + Page, Color_Foreground);
-                    }
+                if (*ptr & (0x80 >> bit)) {
+                    paint_set_pixel(Xpoint + glyph.xOffset + Column, Ypoint + glyph.yOffset + Row, Color_Foreground);
                 } else {
-                    if (Paint.Scale == 2) {
-                        paint_set_pixel(Xpoint + Column * 2, Ypoint + Page * 2, Color_Background);
-                        paint_set_pixel(Xpoint + Column * 2, Ypoint + Page * 2 + 1, Color_Background);
-                        paint_set_pixel(Xpoint + Column * 2 + 1, Ypoint + Page * 2, Color_Background);
-                        paint_set_pixel(Xpoint + Column * 2 + 1, Ypoint + Page * 2 + 1, Color_Background);
-                    } else {
-                        paint_set_pixel(Xpoint + Column, Ypoint + Page, Color_Background);
-                    }
+                    paint_set_pixel(Xpoint + glyph.xOffset + Column, Ypoint + glyph.yOffset + Row, Color_Background);
                 }
             }
-            //One pixel is 8 bits
-            if (Column % 8 == 7)
+
+            //go to next bit
+            bit++;
+
+            //if next pit is out of range, reset to zero and use next byte
+            if (bit == 8) {
+                bit = 0;
                 ptr++;
+            }
+
         }// Write a line
-        if (Font->Width % 8 != 0)
-            ptr++;
+
     }// Write all
 }
 
@@ -578,26 +569,25 @@ parameter:
     Color_Background : Select the background color
 ******************************************************************************/
 void paint_draw_string(UWORD Xstart, UWORD Ystart, const char * pString,
-                         sFONT* Font, UWORD Color_Foreground, UWORD Color_Background)
+                         sFONTCUSTOM* Font, UWORD Color_Foreground, UWORD Color_Background)
 {
     UWORD Xpoint = Xstart;
     UWORD Ypoint = Ystart;
-
-    int font_width = Font->Width;
-    int font_height = Font->Height;
 
     if (Xstart > Paint.Width || Ystart > Paint.Height) {
         printf("paint_draw_string Input exceeds the normal display range\r\n");
         return;
     }
 
-    if (Paint.Scale == 2) {
-        font_width = Font->Width * 2;
-        font_height = Font->Height * 2;
-    }
+    sGlyph glyph;
+    int font_height;
+    int font_width;
 
     while (* pString != '\0') {
 
+        glyph = Font->glyph_table[* pString - 32];
+        font_height = glyph.height - glyph.yOffset;
+        font_width =  glyph.width + glyph.xOffset;
 
         //if X direction filled , reposition to(Xstart,Ypoint),Ypoint is Y direction plus the Height of the character
         if ((Xpoint + font_width ) > Paint.Width ) {
@@ -616,7 +606,7 @@ void paint_draw_string(UWORD Xstart, UWORD Ystart, const char * pString,
         pString ++;
 
         //The next word of the abscissa increases the font of the broadband
-        Xpoint += font_width;
+        Xpoint += glyph.xAdvance;
     }
 }
 
@@ -632,64 +622,64 @@ parameter:
     Color_Background : Select the background color
 ******************************************************************************/
 #define  ARRAY_LEN 255
-void paint_draw_num(UWORD Xpoint, UWORD Ypoint, int32_t Nummber,
-                   sFONT* Font, UWORD Color_Foreground, UWORD Color_Background)
-{
+// void paint_draw_num(UWORD Xpoint, UWORD Ypoint, int32_t Nummber,
+//                    sFONT* Font, UWORD Color_Foreground, UWORD Color_Background)
+// {
 
-    int16_t Num_Bit = 0, Str_Bit = 0;
-    uint8_t Str_Array[ARRAY_LEN] = {0}, Num_Array[ARRAY_LEN] = {0};
-    uint8_t *pStr = Str_Array;
+//     int16_t Num_Bit = 0, Str_Bit = 0;
+//     uint8_t Str_Array[ARRAY_LEN] = {0}, Num_Array[ARRAY_LEN] = {0};
+//     uint8_t *pStr = Str_Array;
 
-    if (Xpoint > Paint.Width || Ypoint > Paint.Height) {
-        printf("Paint_DisNum Input exceeds the normal display range\r\n");
-        return;
-    }
+//     if (Xpoint > Paint.Width || Ypoint > Paint.Height) {
+//         printf("Paint_DisNum Input exceeds the normal display range\r\n");
+//         return;
+//     }
 
-    //Converts a number to a string
-    while (Nummber) {
-        Num_Array[Num_Bit] = Nummber % 10 + '0';
-        Num_Bit++;
-        Nummber /= 10;
-    }
+//     //Converts a number to a string
+//     while (Nummber) {
+//         Num_Array[Num_Bit] = Nummber % 10 + '0';
+//         Num_Bit++;
+//         Nummber /= 10;
+//     }
 
-    //The string is inverted
-    while (Num_Bit > 0) {
-        Str_Array[Str_Bit] = Num_Array[Num_Bit - 1];
-        Str_Bit ++;
-        Num_Bit --;
-    }
+//     //The string is inverted
+//     while (Num_Bit > 0) {
+//         Str_Array[Str_Bit] = Num_Array[Num_Bit - 1];
+//         Str_Bit ++;
+//         Num_Bit --;
+//     }
 
-    //show
-    paint_draw_string(Xpoint, Ypoint, (const char*)pStr, Font, Color_Foreground, Color_Background);
-}
+//     //show
+//     paint_draw_string(Xpoint, Ypoint, (const char*)pStr, Font, Color_Foreground, Color_Background);
+// }
 
-/******************************************************************************
-function:	Display time
-parameter:
-    Xstart           ：X coordinate
-    Ystart           : Y coordinate
-    pTime            : Time-related structures
-    Font             ：A structure pointer that displays a character size
-    Color_Foreground : Select the foreground color
-    Color_Background : Select the background color
-******************************************************************************/
-void paint_draw_time(UWORD Xstart, UWORD Ystart, PAINT_TIME *pTime, sFONT* Font,
-                    UWORD Color_Foreground, UWORD Color_Background)
-{
-    uint8_t value[10] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+// /******************************************************************************
+// function:	Display time
+// parameter:
+//     Xstart           ：X coordinate
+//     Ystart           : Y coordinate
+//     pTime            : Time-related structures
+//     Font             ：A structure pointer that displays a character size
+//     Color_Foreground : Select the foreground color
+//     Color_Background : Select the background color
+// ******************************************************************************/
+// void paint_draw_time(UWORD Xstart, UWORD Ystart, PAINT_TIME *pTime, sFONT* Font,
+//                     UWORD Color_Foreground, UWORD Color_Background)
+// {
+//     uint8_t value[10] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
-    UWORD Dx = Font->Width;
+//     UWORD Dx = Font->Width;
 
-    //Write data into the cache
-    paint_draw_char(Xstart                           , Ystart, value[pTime->Hour / 10], Font, Color_Foreground, Color_Background);
-    paint_draw_char(Xstart + Dx                      , Ystart, value[pTime->Hour % 10], Font, Color_Foreground, Color_Background);
-    paint_draw_char(Xstart + Dx  + Dx / 4 + Dx / 2   , Ystart, ':'                    , Font, Color_Foreground, Color_Background);
-    paint_draw_char(Xstart + Dx * 2 + Dx / 2         , Ystart, value[pTime->Min / 10] , Font, Color_Foreground, Color_Background);
-    paint_draw_char(Xstart + Dx * 3 + Dx / 2         , Ystart, value[pTime->Min % 10] , Font, Color_Foreground, Color_Background);
-    paint_draw_char(Xstart + Dx * 4 + Dx / 2 - Dx / 4, Ystart, ':'                    , Font, Color_Foreground, Color_Background);
-    paint_draw_char(Xstart + Dx * 5                  , Ystart, value[pTime->Sec / 10] , Font, Color_Foreground, Color_Background);
-    paint_draw_char(Xstart + Dx * 6                  , Ystart, value[pTime->Sec % 10] , Font, Color_Foreground, Color_Background);
-}
+//     //Write data into the cache
+//     paint_draw_char(Xstart                           , Ystart, value[pTime->Hour / 10], Font, Color_Foreground, Color_Background);
+//     paint_draw_char(Xstart + Dx                      , Ystart, value[pTime->Hour % 10], Font, Color_Foreground, Color_Background);
+//     paint_draw_char(Xstart + Dx  + Dx / 4 + Dx / 2   , Ystart, ':'                    , Font, Color_Foreground, Color_Background);
+//     paint_draw_char(Xstart + Dx * 2 + Dx / 2         , Ystart, value[pTime->Min / 10] , Font, Color_Foreground, Color_Background);
+//     paint_draw_char(Xstart + Dx * 3 + Dx / 2         , Ystart, value[pTime->Min % 10] , Font, Color_Foreground, Color_Background);
+//     paint_draw_char(Xstart + Dx * 4 + Dx / 2 - Dx / 4, Ystart, ':'                    , Font, Color_Foreground, Color_Background);
+//     paint_draw_char(Xstart + Dx * 5                  , Ystart, value[pTime->Sec / 10] , Font, Color_Foreground, Color_Background);
+//     paint_draw_char(Xstart + Dx * 6                  , Ystart, value[pTime->Sec % 10] , Font, Color_Foreground, Color_Background);
+// }
 
 /******************************************************************************
 function:	Display monochrome bitmap
