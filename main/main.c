@@ -46,43 +46,89 @@ void app_main(void)
     edp_set_lut();
     epd_2in9b_v3_clear();
 
+    char s[64] = {0};
+
     /* Test code starts here */
 
-    // Write hello world to screen
+    // init screen
     paint_new_image(black_image_data, 296, 128, ROTATE_0, BLACK);  
     
-    paint_draw_string(Paint.Width / 2 - 7 * 8 - 4, 10, "00:12:34:56:78:90", &dejaVu_sans_mono_12, BLACK, WHITE);
-    paint_draw_line(10, 14, Paint.Width - 1, 14, BLACK, 1, LINE_STYLE_SOLID);
+    // print serial number to bitmap
+    uint64_t serial = 0x001234567890;
+    sprintf(s, "%02X:%02X:%02X:%02X:%02X:%02X", 
+            (unsigned int) (serial >> 8*5) & 0xff, 
+            (unsigned int) (serial >> 8*4) & 0xff, 
+            (unsigned int) (serial >> 8*3) & 0xff, 
+            (unsigned int) (serial >> 8*2) & 0xff, 
+            (unsigned int) (serial >> 8*1) & 0xff, 
+            (unsigned int) (serial >> 8*0) & 0xff);
+    paint_draw_string(Paint.Width / 2 - 7 * 8 - 4, 10, s, &dejaVu_sans_mono_12, BLACK, WHITE);
 
-    //left and right min max in series
-    paint_draw_line(Paint.Width / 2, 19, Paint.Width / 2, Paint.Height, BLACK, 1, LINE_STYLE_SOLID); // dotted line to separate sides
-    paint_draw_string((Paint.Width / 4) - (7 * 9) - 4, Paint.Height * 3 / 4 + 12, "min: 24 C max: 56 C", &dejaVu_sans_mono_12, BLACK, WHITE);
-    paint_draw_string((Paint.Width * 3 / 4) - (7 * 9) - 4,  Paint.Height * 3 / 4 + 12, "min: 25 C max: 54 C", &dejaVu_sans_mono_12, BLACK, WHITE);
-  
-    // // left min max stacked
-    // paint_draw_string((Paint.Width / 4) - (7 * 4) - 4,  Paint.Height * 3 / 4 + 6, "min: 25 C", &Font12, BLACK, WHITE);
-    // paint_draw_string((Paint.Width / 4) - (7 * 4) - 4,  Paint.Height * 3 / 4 + 12 + 6, "max: 54 C", &Font12, BLACK, WHITE);
-
-    // //right min max stacked
-    // paint_draw_string((Paint.Width * 3 / 4) - (7 * 4) - 4,  Paint.Height * 3 / 4 + 6, "min: 25 C", &Font12, BLACK, WHITE);
-    // paint_draw_string((Paint.Width * 3 / 4) - (7 * 4) - 4,  Paint.Height * 3 / 4 + 12 + 6, "max: 54 C", &Font12, BLACK, WHITE);
-
-    // humidity
-    paint_draw_string((Paint.Width / 4) - (11 * 3), Paint.Height / 2 + 20, "50% RH", &dejaVu_sans_mono_16, BLACK, WHITE);
-    paint_draw_string((Paint.Width * 3 / 4) - (11 * 3), Paint.Height / 2 + 20, "49% RH", &dejaVu_sans_mono_16, BLACK, WHITE);
-
-    // tempature
-    paint_draw_string((Paint.Width / 4) - (17 * 3), Paint.Height / 2, "26 C", &dejaVu_sans_mono_48, BLACK, WHITE);
-    paint_draw_circle(100, 38, 7, BLACK, 2, DRAW_FILL_EMPTY);
+    // battery on left
+    paint_select_image(black_image_data);
+    paint_draw_rectangle(10, 1, 30, 11, BLACK, 1, DRAW_FILL_EMPTY);
+    paint_draw_rectangle(30, 4, 32, 8, BLACK, 1, DRAW_FILL_EMPTY);
 
     paint_select_image(red_image_data);
-    paint_draw_string((Paint.Width * 3 / 4) - (17 * 3), Paint.Height / 2, "54 C", &dejaVu_sans_mono_48, RED, WHITE);
-    paint_draw_circle((Paint.Width / 2) + 100, 38, 7, BLACK, 2, DRAW_FILL_EMPTY);
+    paint_draw_rectangle(12, 3, 12 + 6, 10, BLACK, 1, DRAW_FILL_FULL);
+
+    // battery on right
+    paint_select_image(black_image_data);
+    paint_draw_rectangle(Paint.Width - 32 + 10, 1, Paint.Width - 32 + 30, 11, BLACK, 1, DRAW_FILL_EMPTY);
+    paint_draw_rectangle(Paint.Width - 32 + 30, 4, Paint.Width - 32 + 32, 8, BLACK, 1, DRAW_FILL_EMPTY);
+
+    paint_select_image(black_image_data);
+    paint_draw_rectangle(Paint.Width - 32 + 12, 3, Paint.Width - 32 + 12 + 16, 10, BLACK, 1, DRAW_FILL_FULL);
+
+    // horizontal top line
+    paint_select_image(black_image_data);
+    paint_draw_line(10, 14, Paint.Width - 1, 14, BLACK, 1, LINE_STYLE_SOLID);
+
+    // vertical middle line
+    paint_draw_line(Paint.Width / 2, 19, Paint.Width / 2, Paint.Height - 21, BLACK, 1, LINE_STYLE_SOLID);
+
+    // horizontal top line
+    paint_draw_line(10, Paint.Height - 16, Paint.Width - 1, Paint.Height - 16, BLACK, 1, LINE_STYLE_SOLID);
+
+    // last updated string
+    sprintf(s, "Last updated 01/02/2021 at 01:00 AM");
+    paint_draw_string(Paint.Width / 2 - 18 * 7, Paint.Height - 2, s, &dejaVu_sans_mono_12, BLACK, WHITE);
+
+    // print right and left min/max to bitmap
+    paint_select_image(black_image_data);
+    sprintf(s, "min: %02d C max: %02d C", 26, 57);
+    paint_draw_string((Paint.Width / 4) - (7 * 9) - 4, Paint.Height * 3 / 4 + 10, s, &dejaVu_sans_mono_12, BLACK, WHITE);
+
+    paint_select_image(black_image_data);
+    sprintf(s, "min: %02d C max: %02d C", 27, 58);
+    paint_draw_string((Paint.Width * 3 / 4) - (7 * 9) - 4,  Paint.Height * 3 / 4 + 10, s, &dejaVu_sans_mono_12, BLACK, WHITE);
+
+    // print right temperature to bitmap
+    paint_select_image(black_image_data);
+    sprintf(s, "%02d C", 27);
+    paint_draw_string((Paint.Width / 4) - (17 * 3) - 5, Paint.Height / 2, s, &dejaVu_sans_mono_48, BLACK, WHITE);
+    paint_draw_circle(95, 38, 7, BLACK, 2, DRAW_FILL_EMPTY);
+
+    // print left temperature to bitmap
+    paint_select_image(red_image_data);
+    sprintf(s, "%02d C", 55);
+    paint_draw_string((Paint.Width * 3 / 4) - (17 * 3) - 5, Paint.Height / 2, s, &dejaVu_sans_mono_48, RED, WHITE);
+    paint_draw_circle((Paint.Width / 2) + 95, 38, 7, BLACK, 2, DRAW_FILL_EMPTY);
+
+    // print right and left humidity to bitmap
+    paint_select_image(black_image_data);
+    sprintf(s, "%02d%% RH", 51);
+    paint_draw_string((Paint.Width / 4) - (11 * 3), Paint.Height / 2 + 20, s, &dejaVu_sans_mono_16, BLACK, WHITE);
+    
+    paint_select_image(black_image_data);
+    sprintf(s, "%02d%% RH", 52);
+    paint_draw_string((Paint.Width * 3 / 4) - (11 * 3), Paint.Height / 2 + 20, s, &dejaVu_sans_mono_16, BLACK, WHITE);
 
     // load image to screen
     epd_2in9b_v3_display(black_image_data, red_image_data);
 
     /* Test code ends here */
+    epd_2in9b_v3_sleep();
 
     // int i = 0;
     for (;;) {
