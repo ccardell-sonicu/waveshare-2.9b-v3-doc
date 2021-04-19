@@ -1,5 +1,8 @@
 idf_component_register(SRCS "main.c"
                     "fonts/aclonica_regular_48.c"
+                    "fonts/dejaVu_sans_mono_48.c"
+                    "fonts/dejaVu_sans_mono_16.c"
+                    "fonts/dejaVu_sans_mono_12.c"
                     "gui/gui_paint.c"
                     "utility/edp_2in9b_v3.c"
                     "test_screens/test_screens.c"
