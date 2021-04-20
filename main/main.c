@@ -15,6 +15,10 @@
 #include "luts/luts.h"
 #include "icon/icon.h"
 
+void draw_battery(UWORD x_start, UWORD y_start, UWORD charge_percent);
+void wifi_signal_strength(UWORD x_start, UWORD y_start, UWORD signal_strength_percent);
+void bar_signal_strength(UWORD x_start, UWORD y_start, UWORD signal_strength_percent);
+
 static const char* TAG = "main";
 
 extern const unsigned char black_image[];
@@ -66,55 +70,20 @@ void app_main(void)
     paint_draw_string(Paint.Width / 2 - 7 * 8 - 4, 11, s, &dejaVu_sans_mono_12, BLACK, WHITE);
 
     // battery on left
-    paint_select_image(black_image_data);
-    paint_draw_rectangle(10, 3, 30, 13, BLACK, 1, DRAW_FILL_EMPTY);
-    paint_draw_rectangle(30, 6, 32, 10, BLACK, 1, DRAW_FILL_EMPTY);
-
-    paint_select_image(red_image_data);
-    paint_draw_rectangle(12, 5, 12 + 6, 12, BLACK, 1, DRAW_FILL_FULL);
+    draw_battery(1, 1, 16);
 
     // wifi signal strength
-    paint_select_image(black_image_data);
-    paint_draw_image(wifi_top_line.bitmap, 40, 0, wifi_top_line.width, wifi_top_line.height);
-    paint_draw_image(wifi_middle_line.bitmap, 40, 0, wifi_middle_line.width, wifi_middle_line.height);
-    paint_draw_image(wifi_bottom_line.bitmap, 40, 0, wifi_bottom_line.width, wifi_bottom_line.height);
+    wifi_signal_strength(40, 0, 100);
 
     // battery on right
-    paint_select_image(black_image_data);
-    paint_draw_rectangle(Paint.Width - 32 + 10, 3, Paint.Width - 32 + 29, 13, BLACK, 1, DRAW_FILL_EMPTY);
-    paint_draw_rectangle(Paint.Width - 32 + 29, 6, Paint.Width - 32 + 31, 10, BLACK, 1, DRAW_FILL_EMPTY);
-
-    paint_select_image(black_image_data);
-    paint_draw_rectangle(Paint.Width - 32 + 12, 5, Paint.Width - 32 + 12 + 15, 12, BLACK, 1, DRAW_FILL_FULL);
+    draw_battery(Paint.Width - 32 + 10, 1, 50);
 
     // bar signal strength
-    paint_draw_rectangle(Paint.Width - 50, 1, Paint.Width - 50 + 3, 14, BLACK, 1, DRAW_FILL_FULL);
-    paint_draw_rectangle(Paint.Width - 50 + 5, 4, Paint.Width - 50 + 5 + 3, 14, BLACK, 1, DRAW_FILL_FULL);
-    paint_draw_rectangle(Paint.Width - 50 + 10, 7, Paint.Width - 50 + 10 + 3, 14, BLACK, 1, DRAW_FILL_FULL);
-    paint_draw_rectangle(Paint.Width - 50 + 15, 10, Paint.Width - 50 + 15 + 3, 14, BLACK, 1, DRAW_FILL_FULL);
+    bar_signal_strength(Paint.Width - 50, 1, 100);
 
     // horizontal top line
     paint_select_image(black_image_data);
     paint_draw_line(10, 16, Paint.Width - 1, 16, BLACK, 1, LINE_STYLE_SOLID);
-
-    // vertical middle line
-    paint_draw_line(Paint.Width / 2, 21, Paint.Width / 2, Paint.Height - 21, BLACK, 1, LINE_STYLE_SOLID);
-
-    // horizontal bottom line
-    paint_draw_line(10, Paint.Height - 17, Paint.Width - 1, Paint.Height - 17, BLACK, 1, LINE_STYLE_SOLID);
-
-    // last updated string
-    sprintf(s, "Last updated 01/02/2021 at 01:00 AM");
-    paint_draw_string(Paint.Width / 2 - 18 * 7, Paint.Height - 3, s, &dejaVu_sans_mono_12, BLACK, WHITE);
-
-    // print right and left min/max to bitmap
-    paint_select_image(black_image_data);
-    sprintf(s, "min: %02d C max: %02d C", 26, 57);
-    paint_draw_string((Paint.Width / 4) - (7 * 9) - 4, Paint.Height * 3 / 4 + 9, s, &dejaVu_sans_mono_12, BLACK, WHITE);
-
-    paint_select_image(black_image_data);
-    sprintf(s, "min: %02d C max: %02d C", 27, 58);
-    paint_draw_string((Paint.Width * 3 / 4) - (7 * 9) - 4,  Paint.Height * 3 / 4 + 9, s, &dejaVu_sans_mono_12, BLACK, WHITE);
 
     // print right temperature to bitmap
     paint_select_image(black_image_data);
@@ -122,20 +91,41 @@ void app_main(void)
     paint_draw_string((Paint.Width / 4) - (17 * 3) - 5, Paint.Height / 2, s, &dejaVu_sans_mono_48, BLACK, WHITE);
     paint_draw_circle(95, 38, 7, BLACK, 2, DRAW_FILL_EMPTY);
 
+    // print right humidity to bitmap
+    paint_select_image(black_image_data);
+    sprintf(s, "%02d%% RH", 51);
+    paint_draw_string((Paint.Width / 4) - (11 * 3), Paint.Height / 2 + 20, s, &dejaVu_sans_mono_16, BLACK, WHITE);
+    
+    // print right min/max to bitmap
+    paint_select_image(black_image_data);
+    sprintf(s, "min: %02d C max: %02d C", 26, 57);
+    paint_draw_string((Paint.Width / 4) - (7 * 9) - 4, Paint.Height * 3 / 4 + 9, s, &dejaVu_sans_mono_12, BLACK, WHITE);
+
+    // vertical middle line
+    paint_draw_line(Paint.Width / 2, 21, Paint.Width / 2, Paint.Height - 21, BLACK, 1, LINE_STYLE_SOLID);
+
     // print left temperature to bitmap
     paint_select_image(red_image_data);
     sprintf(s, "%02d C", 55);
     paint_draw_string((Paint.Width * 3 / 4) - (17 * 3) - 5, Paint.Height / 2, s, &dejaVu_sans_mono_48, RED, WHITE);
     paint_draw_circle((Paint.Width / 2) + 95, 38, 7, BLACK, 2, DRAW_FILL_EMPTY);
 
-    // print right and left humidity to bitmap
-    paint_select_image(black_image_data);
-    sprintf(s, "%02d%% RH", 51);
-    paint_draw_string((Paint.Width / 4) - (11 * 3), Paint.Height / 2 + 20, s, &dejaVu_sans_mono_16, BLACK, WHITE);
-    
+    // print left humidity to bitmap
     paint_select_image(black_image_data);
     sprintf(s, "%02d%% RH", 52);
     paint_draw_string((Paint.Width * 3 / 4) - (11 * 3), Paint.Height / 2 + 20, s, &dejaVu_sans_mono_16, BLACK, WHITE);
+
+    // print left min/max to bitmap
+    paint_select_image(black_image_data);
+    sprintf(s, "min: %02d C max: %02d C", 27, 58);
+    paint_draw_string((Paint.Width * 3 / 4) - (7 * 9) - 4,  Paint.Height * 3 / 4 + 9, s, &dejaVu_sans_mono_12, BLACK, WHITE);
+
+    // horizontal bottom line
+    paint_draw_line(10, Paint.Height - 17, Paint.Width - 1, Paint.Height - 17, BLACK, 1, LINE_STYLE_SOLID);
+
+    // last updated string
+    sprintf(s, "Last updated 01/02/2021 at 01:00 AM");
+    paint_draw_string(Paint.Width / 2 - 18 * 7, Paint.Height - 3, s, &dejaVu_sans_mono_12, BLACK, WHITE);
 
     // load image to screen
     epd_2in9b_v3_display(black_image_data, red_image_data);
@@ -149,6 +139,42 @@ void app_main(void)
         // ESP_LOGI(TAG, "loop %d\n", i++);
         printf(".");
     }
+}
+
+void wifi_signal_strength(UWORD x_start, UWORD y_start, UWORD signal_strength_percent)
+{
+    // TODO: add logic for when to display the curved lines
+    paint_select_image(black_image_data);
+    paint_draw_image(wifi_top_line.bitmap, x_start, y_start, wifi_top_line.width, wifi_top_line.height);
+    paint_draw_image(wifi_middle_line.bitmap, x_start, y_start, wifi_middle_line.width, wifi_middle_line.height);
+    paint_draw_image(wifi_bottom_line.bitmap, x_start, y_start, wifi_bottom_line.width, wifi_bottom_line.height);
+}
+
+void bar_signal_strength(UWORD x_start, UWORD y_start, UWORD signal_strength_percent)
+{
+    // TODO: add logic for when to display bars for strength 
+    paint_draw_rectangle(x_start, y_start, x_start + 3, y_start + 13, BLACK, 1, DRAW_FILL_FULL);
+    paint_draw_rectangle(x_start + 5, y_start + 3, x_start + 5 + 3, y_start + 13, BLACK, 1, DRAW_FILL_FULL);
+    paint_draw_rectangle(x_start + 10, y_start + 6, x_start + 10 + 3, y_start + 13, BLACK, 1, DRAW_FILL_FULL);
+    paint_draw_rectangle(x_start + 15, y_start + 9, x_start + 15 + 3, y_start + 13, BLACK, 1, DRAW_FILL_FULL);
+}
+
+void draw_battery(UWORD x_start, UWORD y_start, UWORD charge_percent)
+{
+    uint8_t charge_pixels = 16 * charge_percent / 100; // 0 to 16 pixels
+
+    paint_select_image(black_image_data);
+    paint_draw_rectangle(x_start, y_start, x_start + 20, y_start + 10, BLACK, 1, DRAW_FILL_EMPTY); // battery outline
+    paint_draw_rectangle(x_start + 20, y_start + 3, x_start + 22, y_start + 7, BLACK, 1, DRAW_FILL_EMPTY); // battery terminal
+
+    if (charge_percent >= 20) {
+        paint_select_image(black_image_data);
+        paint_draw_rectangle(x_start + 2, y_start + 2, x_start + 2 + charge_pixels, y_start + 9, BLACK, 1, DRAW_FILL_FULL);
+    } else {
+        paint_select_image(red_image_data);
+        paint_draw_rectangle(x_start + 2, y_start + 2, x_start + 2 + charge_pixels, y_start + 9, BLACK, 1, DRAW_FILL_FULL);
+    }
+
 }
 
 
