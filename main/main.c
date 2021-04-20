@@ -14,6 +14,7 @@
 #include "soc/io_mux_reg.h"
 #include "test_screens/test_screens.h"
 #include "luts/luts.h"
+#include "icon/icon.h"
 
 static const char* TAG = "main";
 
@@ -27,6 +28,11 @@ extern sFONTCUSTOM aclonica_regular_48;
 extern sFONTCUSTOM dejaVu_sans_mono_48;
 extern sFONTCUSTOM dejaVu_sans_mono_16;
 extern sFONTCUSTOM dejaVu_sans_mono_12;
+
+extern sICON wifi_top_line;
+extern sICON wifi_middle_line;
+extern sICON wifi_bottom_line; 
+
 extern PAINT Paint;
 
 unsigned char red_image_data[4736] = {0};
@@ -62,46 +68,58 @@ void app_main(void)
             (unsigned int) (serial >> 8*2) & 0xff, 
             (unsigned int) (serial >> 8*1) & 0xff, 
             (unsigned int) (serial >> 8*0) & 0xff);
-    paint_draw_string(Paint.Width / 2 - 7 * 8 - 4, 10, s, &dejaVu_sans_mono_12, BLACK, WHITE);
+    paint_draw_string(Paint.Width / 2 - 7 * 8 - 4, 11, s, &dejaVu_sans_mono_12, BLACK, WHITE);
 
     // battery on left
     paint_select_image(black_image_data);
-    paint_draw_rectangle(10, 1, 30, 11, BLACK, 1, DRAW_FILL_EMPTY);
-    paint_draw_rectangle(30, 4, 32, 8, BLACK, 1, DRAW_FILL_EMPTY);
+    paint_draw_rectangle(10, 3, 30, 13, BLACK, 1, DRAW_FILL_EMPTY);
+    paint_draw_rectangle(30, 6, 32, 10, BLACK, 1, DRAW_FILL_EMPTY);
 
     paint_select_image(red_image_data);
-    paint_draw_rectangle(12, 3, 12 + 6, 10, BLACK, 1, DRAW_FILL_FULL);
+    paint_draw_rectangle(12, 5, 12 + 6, 12, BLACK, 1, DRAW_FILL_FULL);
+
+    // wifi signal strength
+    paint_select_image(black_image_data);
+    paint_draw_image(wifi_top_line.bitmap, 40, 0, wifi_top_line.width, wifi_top_line.height);
+    paint_draw_image(wifi_middle_line.bitmap, 40, 0, wifi_middle_line.width, wifi_middle_line.height);
+    paint_draw_image(wifi_bottom_line.bitmap, 40, 0, wifi_bottom_line.width, wifi_bottom_line.height);
 
     // battery on right
     paint_select_image(black_image_data);
-    paint_draw_rectangle(Paint.Width - 32 + 10, 1, Paint.Width - 32 + 30, 11, BLACK, 1, DRAW_FILL_EMPTY);
-    paint_draw_rectangle(Paint.Width - 32 + 30, 4, Paint.Width - 32 + 32, 8, BLACK, 1, DRAW_FILL_EMPTY);
+    paint_draw_rectangle(Paint.Width - 32 + 10, 3, Paint.Width - 32 + 29, 13, BLACK, 1, DRAW_FILL_EMPTY);
+    paint_draw_rectangle(Paint.Width - 32 + 29, 6, Paint.Width - 32 + 31, 10, BLACK, 1, DRAW_FILL_EMPTY);
 
     paint_select_image(black_image_data);
-    paint_draw_rectangle(Paint.Width - 32 + 12, 3, Paint.Width - 32 + 12 + 16, 10, BLACK, 1, DRAW_FILL_FULL);
+    paint_draw_rectangle(Paint.Width - 32 + 12, 5, Paint.Width - 32 + 12 + 15, 12, BLACK, 1, DRAW_FILL_FULL);
+
+    // bar signal strength
+    paint_draw_rectangle(Paint.Width - 50, 1, Paint.Width - 50 + 3, 14, BLACK, 1, DRAW_FILL_FULL);
+    paint_draw_rectangle(Paint.Width - 50 + 5, 4, Paint.Width - 50 + 5 + 3, 14, BLACK, 1, DRAW_FILL_FULL);
+    paint_draw_rectangle(Paint.Width - 50 + 10, 7, Paint.Width - 50 + 10 + 3, 14, BLACK, 1, DRAW_FILL_FULL);
+    paint_draw_rectangle(Paint.Width - 50 + 15, 10, Paint.Width - 50 + 15 + 3, 14, BLACK, 1, DRAW_FILL_FULL);
 
     // horizontal top line
     paint_select_image(black_image_data);
-    paint_draw_line(10, 14, Paint.Width - 1, 14, BLACK, 1, LINE_STYLE_SOLID);
+    paint_draw_line(10, 16, Paint.Width - 1, 16, BLACK, 1, LINE_STYLE_SOLID);
 
     // vertical middle line
-    paint_draw_line(Paint.Width / 2, 19, Paint.Width / 2, Paint.Height - 21, BLACK, 1, LINE_STYLE_SOLID);
+    paint_draw_line(Paint.Width / 2, 21, Paint.Width / 2, Paint.Height - 21, BLACK, 1, LINE_STYLE_SOLID);
 
-    // horizontal top line
-    paint_draw_line(10, Paint.Height - 16, Paint.Width - 1, Paint.Height - 16, BLACK, 1, LINE_STYLE_SOLID);
+    // horizontal bottom line
+    paint_draw_line(10, Paint.Height - 17, Paint.Width - 1, Paint.Height - 17, BLACK, 1, LINE_STYLE_SOLID);
 
     // last updated string
     sprintf(s, "Last updated 01/02/2021 at 01:00 AM");
-    paint_draw_string(Paint.Width / 2 - 18 * 7, Paint.Height - 2, s, &dejaVu_sans_mono_12, BLACK, WHITE);
+    paint_draw_string(Paint.Width / 2 - 18 * 7, Paint.Height - 3, s, &dejaVu_sans_mono_12, BLACK, WHITE);
 
     // print right and left min/max to bitmap
     paint_select_image(black_image_data);
     sprintf(s, "min: %02d C max: %02d C", 26, 57);
-    paint_draw_string((Paint.Width / 4) - (7 * 9) - 4, Paint.Height * 3 / 4 + 10, s, &dejaVu_sans_mono_12, BLACK, WHITE);
+    paint_draw_string((Paint.Width / 4) - (7 * 9) - 4, Paint.Height * 3 / 4 + 9, s, &dejaVu_sans_mono_12, BLACK, WHITE);
 
     paint_select_image(black_image_data);
     sprintf(s, "min: %02d C max: %02d C", 27, 58);
-    paint_draw_string((Paint.Width * 3 / 4) - (7 * 9) - 4,  Paint.Height * 3 / 4 + 10, s, &dejaVu_sans_mono_12, BLACK, WHITE);
+    paint_draw_string((Paint.Width * 3 / 4) - (7 * 9) - 4,  Paint.Height * 3 / 4 + 9, s, &dejaVu_sans_mono_12, BLACK, WHITE);
 
     // print right temperature to bitmap
     paint_select_image(black_image_data);

@@ -586,15 +586,33 @@ parameter:
 ******************************************************************************/
 void paint_draw_image(const unsigned char *image_buffer, UWORD xStart, UWORD yStart, UWORD W_Image, UWORD H_Image) 
 {
-    UWORD x, y;
-	UWORD w_byte=(W_Image%8)?(W_Image/8)+1:W_Image/8;
-    UDOUBLE Addr = 0;
-	UDOUBLE pAddr = 0;
-    for (y = 0; y < H_Image; y++) {
-        for (x = 0; x < w_byte; x++) {//8 pixel =  1 byte
-            Addr = x + y * w_byte;
-			pAddr=x+(xStart/8)+((y+yStart)*Paint.WidthByte);
-            Paint.Image[pAddr] = (unsigned char)image_buffer[Addr];
-        }
+    UWORD Row, Column;
+
+    if (xStart > Paint.Width || yStart > Paint.Height) {
+        printf("paint_draw_char Input exceeds the normal display range\r\n");
+        return;
     }
+
+    UWORD bit = 0;
+    const unsigned char *ptr = image_buffer;
+
+    for (Row = 0; Row < H_Image; Row ++ ) {
+        for (Column = 0; Column < W_Image; Column ++ ) {
+
+            //To determine whether the font background color and screen background color is consistent
+            if (*ptr & (0x80 >> bit)) {
+                paint_set_pixel(xStart + Column , yStart + Row, BLACK);
+            }
+
+            //go to next bit
+            bit++;
+
+            //if next pit is out of range, reset to zero and use next byte
+            if (bit == 8) {
+                bit = 0;
+                ptr++;
+            }
+
+        }// Write a line
+    }// Write all
 }
