@@ -1,4 +1,4 @@
-#include "custom_fonts.h"
+#include "font.h"
 
 // Created by http://oleddisplay.squix.ch/ Consider a donation
 // In case of problems make sure that you are using the font file with the correct version!
@@ -200,7 +200,7 @@ const sGlyph DejaVu_Sans_Mono_48Glyphs[] = {
 
 // when a character is written (xpoint, ypoint) is at the line the characters are written at
 // (i.e. where the underline would be if written below a character)
-sFONTCUSTOM dejaVu_sans_mono_48 = {    
+sFONT dejaVu_sans_mono_48 = {    
   DejaVu_Sans_Mono_48Bitmaps, /* *bitmap_table */
   DejaVu_Sans_Mono_48Glyphs, /* *glyph_table */
   0, /* y_min: the delta from the ypoint */

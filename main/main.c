@@ -5,29 +5,24 @@
 #include "freertos/task.h"
 #include "driver/gpio.h"
 #include "sdkconfig.h"
-
-#include "fonts/custom_fonts.h"
-#include "main.h"
-#include "utility/edp_2in9b_v3.h"
-#include "gui/gui_paint.h"
 #include "esp_log.h"
 #include "soc/io_mux_reg.h"
-#include "test_screens/test_screens.h"
+
+#include "main.h"
+#include "font/font.h"
+#include "utility/edp_2in9b_v3.h"
+#include "gui/gui_paint.h"
 #include "luts/luts.h"
 #include "icon/icon.h"
 
 static const char* TAG = "main";
 
-// extern const unsigned char horizontal_quadrants[];
-// extern const unsigned char vertical_quadrants[];
-// extern const unsigned char four_quadrants[];
 extern const unsigned char black_image[];
 extern const unsigned char red_image[];
 
-extern sFONTCUSTOM aclonica_regular_48;
-extern sFONTCUSTOM dejaVu_sans_mono_48;
-extern sFONTCUSTOM dejaVu_sans_mono_16;
-extern sFONTCUSTOM dejaVu_sans_mono_12;
+extern sFONT dejaVu_sans_mono_48;
+extern sFONT dejaVu_sans_mono_16;
+extern sFONT dejaVu_sans_mono_12;
 
 extern sICON wifi_top_line;
 extern sICON wifi_middle_line;

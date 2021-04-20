@@ -13,12 +13,12 @@ typedef struct _tGlyph
   int yOffset; //number of bits or pixels of padding above the character (this is negative because of a different screen)
 } sGlyph;
 
-typedef struct _tFontCustom
+typedef struct _tFont
 {    
   const uint8_t *bitmap_table;
   const sGlyph *glyph_table;
   const int y_min;
   const int y_max;
-} sFONTCUSTOM;
+} sFONT;
 
 #endif /* _CUSTOM_FONTS_H_ */
