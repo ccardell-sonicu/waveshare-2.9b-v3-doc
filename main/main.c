@@ -67,23 +67,23 @@ void app_main(void)
             (unsigned int) (serial >> 8*2) & 0xff, 
             (unsigned int) (serial >> 8*1) & 0xff, 
             (unsigned int) (serial >> 8*0) & 0xff);
-    paint_draw_string(Paint.Width / 2 - 7 * 8 - 4, 11, s, &dejaVu_sans_mono_12, BLACK, WHITE);
+    paint_draw_string((Paint.Width / 2) - (8 * 8 + 4), 11, s, &dejaVu_sans_mono_12, BLACK, WHITE);
 
     // battery on left
-    draw_battery(1, 1, 16);
+    draw_battery(1, 3, 16);
 
     // wifi signal strength
-    wifi_signal_strength(40, 0, 100);
+    wifi_signal_strength(23 + 5, 0, 100);
 
     // battery on right
-    draw_battery(Paint.Width - 32 + 10, 1, 50);
+    draw_battery(Paint.Width - 23, 3, 50);
 
     // bar signal strength
-    bar_signal_strength(Paint.Width - 50, 1, 100);
+    bar_signal_strength(Paint.Width - 42 - 5, 1, 100);
 
     // horizontal top line
     paint_select_image(black_image_data);
-    paint_draw_line(10, 16, Paint.Width - 1, 16, BLACK, 1, LINE_STYLE_SOLID);
+    paint_draw_line(1, 16, Paint.Width - 1, 16, BLACK, 1, LINE_STYLE_SOLID);
 
     // print right temperature to bitmap
     paint_select_image(black_image_data);
@@ -121,7 +121,7 @@ void app_main(void)
     paint_draw_string((Paint.Width * 3 / 4) - (7 * 9) - 4,  Paint.Height * 3 / 4 + 9, s, &dejaVu_sans_mono_12, BLACK, WHITE);
 
     // horizontal bottom line
-    paint_draw_line(10, Paint.Height - 17, Paint.Width - 1, Paint.Height - 17, BLACK, 1, LINE_STYLE_SOLID);
+    paint_draw_line(1, Paint.Height - 17, Paint.Width - 1, Paint.Height - 17, BLACK, 1, LINE_STYLE_SOLID);
 
     // last updated string
     sprintf(s, "Last updated 01/02/2021 at 01:00 AM");
@@ -167,7 +167,7 @@ void draw_battery(UWORD x_start, UWORD y_start, UWORD charge_percent)
     paint_draw_rectangle(x_start, y_start, x_start + 20, y_start + 10, BLACK, 1, DRAW_FILL_EMPTY); // battery outline
     paint_draw_rectangle(x_start + 20, y_start + 3, x_start + 22, y_start + 7, BLACK, 1, DRAW_FILL_EMPTY); // battery terminal
 
-    if (charge_percent >= 20) {
+    if (charge_percent >= 25) {
         paint_select_image(black_image_data);
         paint_draw_rectangle(x_start + 2, y_start + 2, x_start + 2 + charge_pixels, y_start + 9, BLACK, 1, DRAW_FILL_FULL);
     } else {
